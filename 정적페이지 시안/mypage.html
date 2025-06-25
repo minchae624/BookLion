@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 먹는 사자 - 마이페이지</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="home-header">
+    <h1>책 먹는 사자</h1>
+    <div class="home-user-info">
+      <span>환영합니다. 멋사 님</span>
+      <div class="home-nav-buttons">
+        <a href="main.html" class="btn btn-secondary">로그아웃</a>
+        <a href="home.html" class="btn btn-secondary">메인으로 돌아가기</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mypage-container">
+    <form>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+      <label for="userid">ID</label>
+      <input type="text" id="userid" class="input-field" value="001" readonly />
+
+      <label for="password">Password</label>
+      <div class="input-inline">
+        <input type="text" id="password" class="input-field" value="abc1234" />
+        <button type="button" class="btn btn-secondary">수정</button>
+      </div>
+
+      <label for="email">e-mail</label>
+      <div class="input-inline">
+        <input type="text" id="email" class="input-field" value="a123@abc.com" />
+        <button type="button" class="btn btn-secondary">수정</button>
+      </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+        <div style="width: 48%;">
+          <h3>작성한 글</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" class="input-field" value="제목1" readonly />
+            <input type="text" class="input-field" value="제목2" readonly />
+            <input type="text" class="input-field" value="제목3" readonly />
+          </div>
+        </div>
+        <div style="width: 48%;">
+          <h3>좋아요 한 게시글</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" class="input-field" value="게시글1" readonly />
+            <input type="text" class="input-field" value="게시글2" readonly />
+            <input type="text" class="input-field" value="게시글3" readonly />
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+  <div style="display: flex;">
+      <a href="main.html" style="color:grey; text-decoration: none; margin: 0 auto;">탈퇴하기</a>
+  </div>
+</body>
+</html>
