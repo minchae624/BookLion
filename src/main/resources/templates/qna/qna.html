@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>책 먹는 사자 - Q&A</title>
+	<link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+	<header class="home-header">
+		<a href="/">
+			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+		</a>>
+		<div class="home-user-info">
+			<span>환영합니다. 멋사 님</span>
+			<div class="home-nav-buttons">
+				<a href="main.html" class="btn btn-secondary">로그아웃</a>
+				<a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+			</div>
+		</div>
+	</header>
+	<main class="mypage-container">
+		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+			<h3>Q&A 목록</h3>
+			<a href="qna_write.html" class="btn btn-blue">질문하기</a>
+		</div>
+		<div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+			<select class="input-field" style="flex: 1;">
+				<option value="키워드 검색">키워드 검색</option>
+				<option value="카테고리 검색">카테고리 검색</option>
+			</select>
+			<input type="text" placeholder="작성자 또는 제목 검색" class="input-field" style="flex: 2;" />
+			<button class="btn btn-secondary">검색</button>
+		</div>
+		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+			<thead>
+				<tr style="border-bottom: 2px solid #ccc;">
+					<th>번호</th>
+					<th>카테고리</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일</th>
+					<th>상태</th>
+					<th>조회수</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr style="text-align: center;">
+					<td>1</td>
+					<td>책 추천</td>
+					<td><a href="qna_detail.html" style="text-decoration: none; color: #333;">무협 소설 추천해주세요!</a></td>
+					<td>멋사</td>
+					<td>2024-06-25</td>
+					<td style="color: green;">해결</td>
+					<td>42</td>
+				</tr>
+			</tbody>
+		</table>
+		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+			<a href="#" class="btn btn-secondary">1</a>
+			<a href="#" class="btn btn-secondary">2</a>
+			<a href="#" class="btn btn-secondary">3</a>
+		</div>
+	</main>
+</body>
+
+</html>

@@ -15,6 +15,10 @@ body {
 .logo-img {
   width: 180px;
 }
+.linklogo {
+  width: 180px;
+  height: 100%;
+}
 .auth-buttons .btn {
   margin: 0 1rem;
   padding: 0.8rem 2rem;
