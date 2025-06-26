@@ -1,4 +1,4 @@
-package com.booklion.Repository;
+package com.booklion.repository;
 
 import com.booklion.model.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
