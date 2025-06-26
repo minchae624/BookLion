@@ -28,6 +28,7 @@ public class Users {
 
     private LocalDateTime createdAt;
 
+    @Column(nullable = true)
     private String comment;
 
     @PrePersist

@@ -21,23 +21,36 @@ public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    //회원 가입
+    // 회원가입
     @PostMapping("/signup")
-    public String signup(@RequestParam String username,
-                         @RequestParam String password,
-                         @RequestParam String email) {
+    public ResponseEntity<String> signup(@RequestBody Map<String, String> payload) {
+        String username = payload.get("username");
+        String password = payload.get("password");
+        String email = payload.get("email");
+
         if (userService.isUsernameTaken(username)) {
-            return "duplicate";
+            return ResponseEntity.ok("duplicate");
         }
 
         userService.register(username, password, email);
-        return "success";
+        return ResponseEntity.ok("success");
     }
-    
-    //로그인
+
+    // ID 중복 확인
+    @GetMapping("/check")
+    public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam String username) {
+        boolean available = !userService.isUsernameTaken(username);
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("available", available);
+        return ResponseEntity.ok(result);
+    }
+
+    // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestParam String username,
-                                                      @RequestParam String password) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload) {
+        String username = payload.get("username");
+        String password = payload.get("password");
+
         Users user = userService.login(username, password);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -53,15 +66,15 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-    
-    //회원정보 조회 - 마이페이지 이름 같은 거
+
+    // 회원정보 조회
     @GetMapping("/me")
     public Users getMyInfo(@RequestHeader("Authorization") String token) {
         String pureToken = token.replace("Bearer ", "");
         return userService.getUserInfoFromToken(pureToken);
     }
-    
-    //회원정보 수정
+
+    // 회원정보 수정 (이미 JSON 구조 사용 중이므로 변경 없음)
     @PutMapping("/me")
     public ResponseEntity<?> updateMyInfo(@RequestHeader("Authorization") String token,
                                           @RequestBody Map<String, String> updates) {
@@ -79,14 +92,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    //회원 탈퇴 (로그아웃은 프론트에서 구현)
+    // 회원 탈퇴
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String token) {
         String pureToken = token.replace("Bearer ", "");
         userService.deleteUserByToken(pureToken);
         return ResponseEntity.ok("deleted");
     }
-
-    
-
 }

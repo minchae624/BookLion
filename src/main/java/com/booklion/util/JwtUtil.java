@@ -11,9 +11,9 @@ import java.util.Date;
 public class JwtUtil {
 
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long EXPIRATION = 1000L * 60 * 60; // 1시간
 
-    private final long EXPIRATION = 1000L * 60 * 60;
-
+    // 토큰 생성
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -23,10 +23,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String extractUsername(String token) {
-        return parseClaims(token).getSubject();
-    }
-
+    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
@@ -36,6 +33,12 @@ public class JwtUtil {
         }
     }
 
+    // 토큰에서 사용자 이름 추출
+    public String getUsernameFromToken(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    // 내부 Claims 파싱
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -43,15 +46,4 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
-    }
-
 }
