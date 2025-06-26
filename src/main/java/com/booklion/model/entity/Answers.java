@@ -13,10 +13,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="Answers")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Answers {
@@ -39,44 +41,20 @@ public class Answers {
 	@JoinColumn(name="quest_id")
 	private Questions question;
 
-	public String getContent() {
-		return content;
+	public void setUser(Users user) {
+		this.user = user;
+	}
+	
+	public void setQuestion(Questions question) {
+		this.question = question;
 	}
 
 	public void setContent(String content) {
 		this.content = content;
 	}
 
-	public AnswerStatus getIsAccepted() {
-		return isAccepted;
-	}
-
 	public void setIsAccepted(AnswerStatus isAccepted) {
 		this.isAccepted = isAccepted;
-	}
-
-	public Users getUser() {
-		return user;
-	}
-
-	public void setUser(Users user) {
-		this.user = user;
-	}
-
-	public Questions getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(Questions question) {
-		this.question = question;
-	}
-
-	public Integer getAnswerId() {
-		return answerId;
-	}
-
-	public LocalDateTime getWritingtime() {
-		return writingtime;
 	}
 
 	
