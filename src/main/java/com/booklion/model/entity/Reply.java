@@ -13,7 +13,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-<<<<<<< comment
 
 @Entity
 @Table(name = "Reply")
@@ -45,30 +44,5 @@ public class Reply {
 	public void setWritingtime(LocalDateTime writingtime) {
 		this.writingtime = writingtime;
 	}
-=======
-import lombok.Setter;
 
-@Entity
-@Table(name = "Reply")
-@Getter @Setter
-@NoArgsConstructor
-public class Reply {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long reply_id;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id", nullable = false)
-	private Post post;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private Users user;
-	
-	@Column(nullable = false)
-	private String content;
-	
-	private LocalDateTime writingtime;
->>>>>>> dev
 }
