@@ -13,11 +13,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "Reply")
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 public class Reply {
 	
@@ -37,4 +36,12 @@ public class Reply {
 	private String content;
 	
 	private LocalDateTime writingtime;
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public void setWritingtime(LocalDateTime writingtime) {
+		this.writingtime = writingtime;
+	}
 }
