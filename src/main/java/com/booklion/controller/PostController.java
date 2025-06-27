@@ -26,7 +26,7 @@ public class PostController {
     @PostMapping
     public String write(@ModelAttribute Post post, @ModelAttribute Users user) {
 
-        /* 변경해야 할 사항
+        /* 유저 객체를 받아야 함
         Users user = new Users();
         user.setUserId(1);
         user.setUsername("test");
@@ -66,5 +66,10 @@ public class PostController {
             return "review/reviews";
         }
 
+    }
+    /* 상세 게시글 조회 */
+    @GetMapping("/{id}")
+    public String detail(Model model, @PathVariable Long id) {
+        return "review/review_detail";
     }
 }
