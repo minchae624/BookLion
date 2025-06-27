@@ -20,8 +20,26 @@ public class Like {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Questions question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
+    
+    public static Like forPost(Users user, Post post) {
+        Like like = new Like();
+        like.setUser(user);
+        like.setPost(post);
+        return like;
+    }
+    
+    public static Like forQuestion(Users user, Questions question) {
+        Like like = new Like();
+        like.setUser(user);
+        like.setQuestion(question);
+        return like;
+    }
 }

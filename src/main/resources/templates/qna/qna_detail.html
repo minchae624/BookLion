@@ -12,29 +12,21 @@
 	<header class="home-header">
 		<a href="/">
 		  <img src="/img/linklogo.png" alt="홈으로" class="linklogo">
-		</a>>
+		</a>
 		<div class="home-user-info">
-			<span>환영합니다. 멋사 님</span>
+			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<a href="main.html" class="btn btn-secondary">로그아웃</a>
-				<a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+				<a href="main.html" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+				<a href="mypage.html" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
 			</div>
 		</div>
 	</header>
+
 	<main class="review-detail-container">
-		<h3>제목: 무협 소설 추천해주세요!</h3>
-		<div style="margin: 1rem 0;">
-			<p>
-				<strong>[카테고리]</strong> 책 추천 &nbsp; | &nbsp;
-				<strong>[작성자]</strong> 멋사 &nbsp; | &nbsp;
-				<strong>[작성일]</strong> 2025.06.25 &nbsp; | &nbsp;
-				<strong>[조회수]</strong> 21 &nbsp; | &nbsp;
-				<strong>[상태]</strong> <span style="color: green;">해결</span>
-			</p>
+		<h3 id="question-title">제목</h3>
+		<div style="margin: 1rem 0;" id="question-meta">
 		</div>
-		<div
-			style="padding: 1rem; background-color: #eee; border-radius: 6px; margin-bottom: 1.5rem; line-height: 1.6;">
-			<p>삼국지 미만 잡 아니냐</p>
+		<div id="question-content" style="padding: 1rem; background-color: #eee; border-radius: 6px; margin-bottom: 1.5rem; line-height: 1.6;">
 		</div>
 		<p style="text-align: right; font-size: 0.9rem;">
 			<a href="#" style="margin-right: 1rem;">수정</a>
@@ -47,14 +39,18 @@
 			<p>저도 사실 잘 모름</p>
 			<p style="text-align: right; font-size: 0.9rem;">2025.06.24</p>
 		</div>
+		
 		<div style="margin-top: 2rem;">
 			<label for="new-comment"><strong>댓글 작성</strong></label>
 			<textarea id="new-comment" rows="5" class="input-field" placeholder="댓글을 입력하세요."></textarea>
 			<div style="text-align: right; margin-top: 0.5rem;">
-				<a href="qna_detail.html" class="btn btn-blue">등록</a>
+				<a href="#" class="btn btn-blue">등록</a>
 			</div>
 		</div>
 	</main>
+
+	<script src="frontshared.js"></script>
+	<script src="detail.js"></script>
 </body>
 
 </html>
