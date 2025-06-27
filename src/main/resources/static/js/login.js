@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("token", data.token);
 
       alert("로그인 성공!");
-      window.location.href = "home.html";
+      window.location.href = "/api/home";
     } catch (err) {
       alert("로그인에 실패했습니다. ID 또는 비밀번호를 확인해주세요.");
     }
