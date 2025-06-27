@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org>
 
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - 감상평 상세</title>
-	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
 <body>
 	<header class="home-header">
-		<a href="/api/home">
+		<a th:href="@{/api/home}">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
