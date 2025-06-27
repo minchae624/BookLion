@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>책 먹는 사자 - 마이페이지</title>
-  <link rel="stylesheet" href="css/style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>책 먹는 사자 - 마이페이지</title>
+	<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <header class="home-header">
-	<a href="home.html">
-	  <img src="/img/linklogo.png" alt="홈으로" class="linklogo">
-	</a>
+	<header class="home-header">
+		<a href="home.html">
+			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+		</a>
 		<div class="home-user-info">
 			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
@@ -18,57 +20,58 @@
 				<a href="#" id="mypage-btn" class="btn btn-secondary">마이페이지</a>
 			</div>
 		</div>
-  </header>
+	</header>
 
-  <main class="mypage-container">
-    <form>
-      <!--ID-->
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-      <label for="user-id">ID</label>
-      <input type="text" id="user-id" style="background-color: #e0e0e0;" class="input-field" readonly />
+	<main class="mypage-container">
+		<form>
+			<!--ID-->
+			<div style="display: flex; flex-direction: column; gap: 10px;">
+				<label for="user-id">ID</label>
+				<input type="text" id="user-id" style="background-color: #e0e0e0;" class="input-field" readonly />
 
-      <!--password-->
-      <label for="user-password">Password</label>
-      <div class="input-inline">
-        <input type="password" id="user-password" class="input-field" />
-        <button type="button" id="update-password-btn" class="btn btn-secondary">수정</button>
-      </div>
+				<!--password-->
+				<label for="user-password">Password</label>
+				<div class="input-inline">
+					<input type="password" id="user-password" class="input-field" />
+					<button type="button" id="update-password-btn" class="btn btn-secondary">수정</button>
+				</div>
 
-      <!--email-->
-      <label for="user-email">e-mail</label>
-      <div class="input-inline">
-        <input type="email" id="user-email" class="input-field" />
-        <button type="button" id="update-email-btn" class="btn btn-secondary">수정</button>
-      </div>
-      </div>
+				<!--email-->
+				<label for="user-email">e-mail</label>
+				<div class="input-inline">
+					<input type="email" id="user-email" class="input-field" />
+					<button type="button" id="update-email-btn" class="btn btn-secondary">수정</button>
+				</div>
+			</div>
 
-      <!-- 작성한 글 -->
-      <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
-        <div style="width: 48%;">
-          <h3>작성한 글</h3>
-          <div id="user-posts" style="display: flex; flex-direction: column; gap: 10px;">
-            <input type="text" class="input-field" value="게시글1" readonly />
-            <input type="text" class="input-field" value="게시글2" readonly />
-            <input type="text" class="input-field" value="게시글3" readonly />
-          </div>
-        </div>
+			<!-- 작성한 글 -->
+			<div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+				<div style="width: 48%;">
+					<h3>작성한 글</h3>
+					<div id="user-posts" style="display: flex; flex-direction: column; gap: 10px;">
+						<input type="text" class="input-field" value="게시글1" readonly />
+						<input type="text" class="input-field" value="게시글2" readonly />
+						<input type="text" class="input-field" value="게시글3" readonly />
+					</div>
+				</div>
 
-        <!-- 좋아요 한 게시글 -->
-        <div style="width: 48%;">
-          <h3>좋아요 한 게시글</h3>
-          <div id="liked-posts" style="display: flex; flex-direction: column; gap: 10px;">
-            <input type="text" class="input-field" value="게시글1" readonly />
-            <input type="text" class="input-field" value="게시글2" readonly />
-            <input type="text" class="input-field" value="게시글3" readonly />
-          </div>
-        </div>
-      </div>
-    </form>
-  </main>
-  <div style="display: flex;">
-      <button id="delete-account-btn" class="btn btn-red" style="margin: 0 auto;">탈퇴하기</button>
-</div>
-  </div>
-  <script src="js/mypage.js"></script>
+				<!-- 좋아요 한 게시글 -->
+				<div style="width: 48%;">
+					<h3>좋아요 한 게시글</h3>
+					<div id="liked-posts" style="display: flex; flex-direction: column; gap: 10px;">
+						<input type="text" class="input-field" value="게시글1" readonly />
+						<input type="text" class="input-field" value="게시글2" readonly />
+						<input type="text" class="input-field" value="게시글3" readonly />
+					</div>
+				</div>
+			</div>
+		</form>
+	</main>
+	<div style="display: flex;">
+		<button id="delete-account-btn" class="btn btn-red" style="margin: 0 auto;">탈퇴하기</button>
+	</div>
+	</div>
+	<script src="js/mypage.js"></script>
 </body>
+
 </html>
