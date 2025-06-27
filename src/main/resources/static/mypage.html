@@ -8,48 +8,55 @@
 </head>
 <body>
   <header class="home-header">
-	<a href="/">
+	<a href="home.html">
 	  <img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 	</a>
-    <div class="home-user-info">
-      <span>환영합니다. 멋사 님</span>
-      <div class="home-nav-buttons">
-        <a href="main.html" class="btn btn-secondary">로그아웃</a>
-        <a href="home.html" class="btn btn-secondary">메인으로 돌아가기</a>
-      </div>
-    </div>
+		<div class="home-user-info">
+			<span id="welcome-msg">환영합니다.</span>
+			<div class="home-nav-buttons">
+				<a href="#" id="logout-btn" class="btn btn-secondary">로그아웃</a>
+				<a href="#" id="mypage-btn" class="btn btn-secondary">마이페이지</a>
+			</div>
+		</div>
   </header>
 
   <main class="mypage-container">
     <form>
+      <!--ID-->
       <div style="display: flex; flex-direction: column; gap: 10px;">
-      <label for="userid">ID</label>
-      <input type="text" id="userid" style="background-color: #e0e0e0;" class="input-field" value="001" readonly />
+      <label for="user-id">ID</label>
+      <input type="text" id="user-id" style="background-color: #e0e0e0;" class="input-field" readonly />
 
-      <label for="password">Password</label>
+      <!--password-->
+      <label for="user-password">Password</label>
       <div class="input-inline">
-        <input type="text" id="password" class="input-field" value="abc1234" />
-        <button type="button" class="btn btn-secondary">수정</button>
+        <input type="password" id="user-password" class="input-field" />
+        <button type="button" id="update-password-btn" class="btn btn-secondary">수정</button>
       </div>
 
-      <label for="email">e-mail</label>
+      <!--email-->
+      <label for="user-email">e-mail</label>
       <div class="input-inline">
-        <input type="text" id="email" class="input-field" value="a123@abc.com" />
-        <button type="button" class="btn btn-secondary">수정</button>
+        <input type="email" id="user-email" class="input-field" />
+        <button type="button" id="update-email-btn" class="btn btn-secondary">수정</button>
       </div>
       </div>
+
+      <!-- 작성한 글 -->
       <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
         <div style="width: 48%;">
           <h3>작성한 글</h3>
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <input type="text" class="input-field" value="제목1" readonly />
-            <input type="text" class="input-field" value="제목2" readonly />
-            <input type="text" class="input-field" value="제목3" readonly />
+          <div id="user-posts" style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" class="input-field" value="게시글1" readonly />
+            <input type="text" class="input-field" value="게시글2" readonly />
+            <input type="text" class="input-field" value="게시글3" readonly />
           </div>
         </div>
+
+        <!-- 좋아요 한 게시글 -->
         <div style="width: 48%;">
           <h3>좋아요 한 게시글</h3>
-          <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div id="liked-posts" style="display: flex; flex-direction: column; gap: 10px;">
             <input type="text" class="input-field" value="게시글1" readonly />
             <input type="text" class="input-field" value="게시글2" readonly />
             <input type="text" class="input-field" value="게시글3" readonly />
@@ -59,7 +66,9 @@
     </form>
   </main>
   <div style="display: flex;">
-      <a href="main.html" style="color:grey; text-decoration: none; margin: 0 auto;">탈퇴하기</a>
+      <button id="delete-account-btn" class="btn btn-red" style="margin: 0 auto;">탈퇴하기</button>
+</div>
   </div>
+  <script src="js/mypage.js"></script>
 </body>
 </html>
