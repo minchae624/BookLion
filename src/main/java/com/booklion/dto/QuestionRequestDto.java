@@ -13,6 +13,7 @@ public class QuestionRequestDto {
     private String title;
     private String content;
     private Category category;
+    private String username;
 
     public Questions toEntity() {
         return Questions.builder()
