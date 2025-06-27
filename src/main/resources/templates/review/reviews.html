@@ -26,16 +26,18 @@
 			<h3>감상평 목록</h3>
 			<a th:href="@{/api/posts/write}" class="btn btn-blue">글쓰기</a>
 		</div>
-		<div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-			<select class="input-field" style="flex: 1;">
-				<option value="글 제목">글 제목</option>
-				<option value="글 내용">글 내용</option>
-				<option value="책 제목">책 제목</option>
-				<option value="저자">저자</option>
-			</select>
-			<input type="text" placeholder="작성자 검색" class="input-field" style="flex: 2;" />
-			<button class="btn btn-secondary">검색</button>
-		</div>
+		<form action="/api/posts" method="get">
+			<div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+				<select name="keyword" class="input-field" style="flex: 1;">
+					<option value="t">글 제목</option>
+					<option value="c">글 내용</option>
+					<option value="b">책 제목</option>
+					<option value="a">저자</option>
+				</select>
+				<input type="text" placeholder="검색어 입력" name="input" class="input-field" style="flex: 2;" />
+				<button type="submit" class="btn btn-secondary">검색</button>
+			</div>
+		</form>
 		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
 			<thead>
 				<tr style="border-bottom: 2px solid #ccc;">
@@ -60,10 +62,25 @@
 				</tr>
 			</tbody>
 		</table>
+
+		<!-- 페이징 영역 -->
+		<!-- 이전 버튼 -->
 		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
-			<a href="#" class="btn btn-secondary">1</a>
-			<a href="#" class="btn btn-secondary">2</a>
-			<a href="#" class="btn btn-secondary">3</a>
+			<span th:if="${page.hasPrevious()}">
+				<a th:href="@{/api/posts(page=${page.number - 1}, keyword=${keyword}, input=${input})}" class="btn btn-secondary">이전</a>
+			</span>
+
+			<!-- 페이지 번호 -->
+				<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+			<a th:href="@{/api/posts(page=${i}, keyword=${keyword}, input=${input})}"
+			   th:text="${i + 1}"
+			   th:classappend="${i == page.number} ? 'btn btn-blue' : 'btn btn-secondary'">
+			</a>
+			</span>
+			<!-- 다음 버튼 -->
+			<span th:if="${page.hasNext()}">
+				<a th:href="@{/api/posts(page=${page.number + 1}, keyword=${keyword}, input=${input})}" class="btn btn-secondary">다음</a>
+			</span>
 		</div>
 	</main>
 	<script src="/js/home.js"></script>

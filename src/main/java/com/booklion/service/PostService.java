@@ -3,6 +3,8 @@ package com.booklion.service;
 import com.booklion.model.entity.Post;
 import com.booklion.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,24 @@ public class PostService {
     }
 
     /* 게시판 조회 */
-    public List<Post> findAll() {
-        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "postId"));
+    public Page<Post> findAll(Pageable pageable) {
+        return postRepository.findAll(pageable);
+    }
+    /* 게시판 제목 검색 */
+    public Page<Post> searchByTitle(String title, Pageable pageable) {
+        return postRepository.findByTitleContaining(title, pageable);
+    }
+    /* 게시판 내용 검색 */
+    public Page<Post> searchByContent(String content, Pageable pageable) {
+        return postRepository.findByContentContaining(content, pageable);
+    }
+    /* 책 제목 검색 */
+    public Page<Post> searchByBooktitle(String title, Pageable pageable) {
+        return postRepository.findByBooktitleContaining(title, pageable);
+    }
+    /* 책 저자 검색 */
+    public Page<Post> searchByAuthor(String author, Pageable pageable) {
+        return postRepository.findByAuthorContaining(author, pageable);
     }
 
     /* 상세 게시판 조회 */
