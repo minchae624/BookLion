@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/BookLion?serverTimezone=Asia/Seoul
-    username: root   
+    username: root    
     password: admin1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 

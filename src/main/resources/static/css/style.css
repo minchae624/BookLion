@@ -98,6 +98,7 @@ body {
   font-weight: bold;
   font-size: 0.95rem;
   text-decoration: none;
+  cursor: pointer;
 }
 .btn-green {
   background-color: #2ecc71;
@@ -114,6 +115,7 @@ body {
   color: #fff;
   border: none;
 }
+
 .btn-secondary {
   background-color: #ddd;
   color: #000;

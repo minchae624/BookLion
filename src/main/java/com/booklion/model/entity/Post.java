@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name="post")
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 public class Post {
     @Id
@@ -36,9 +36,41 @@ public class Post {
 
     private Double rating;
 
-    private int viewCount;
+    private Integer viewCount;
 
-    private int replyCount;
+    private Integer replyCount;
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setBooktitle(String booktitle) {
+        this.booktitle = booktitle;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<Like>();
