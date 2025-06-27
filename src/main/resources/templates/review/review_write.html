@@ -5,12 +5,12 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - 감상평 작성</title>
-	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
 	<header class="home-header">
-		<a href="/api/home">
+		<a href="/">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
@@ -23,11 +23,11 @@
 	</header>
 	<main class="mypage-container">
 		<h3>감상평 작성</h3>
-		<form class="signup-form">
+		<form class="signup-form" th:action="@{/api/posts}" method="post">
 			<label for="post-title">글 제목</label>
-			<input type="text" id="post-title" name="post-title" class="input-field" required>
+			<input type="text" id="post-title" name="title" class="input-field" required>
 			<label for="book-title">책 제목</label>
-			<input type="text" id="book-title" name="book-title" class="input-field" required>
+			<input type="text" id="book-title" name="booktitle" class="input-field" required>
 			<label for="author">작가</label>
 			<input type="text" id="author" name="author" class="input-field" required>
 			<label for="genre">장르</label>
@@ -56,8 +56,8 @@
 			<textarea id="content" name="content" class="input-field" rows="10" required
 				style="resize: vertical;"></textarea>
 			<div class="signup-button-group">
-				<a href="reviews.html" class="btn btn-green">등록</a>
-				<a href="reviews.html" class="btn btn-red">취소</a>
+				<button type="submit" class="btn btn-green">등록</button>
+				<a th:href="@{/api/posts}" class="btn btn-red">취소</a>
 			</div>
 		</form>
 	</main>
