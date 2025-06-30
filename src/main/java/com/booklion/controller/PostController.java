@@ -33,8 +33,10 @@ public class PostController {
     @PostMapping
     public String write(@ModelAttribute Post post, @RequestParam String username) {
 
-        Optional<Users> user = userRepository.findByUsername(username); //예외처리 필요
-        post.setUser(user.get());
+        Users user = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("유저이름을 찾을 수 없음")
+        );
+        post.setUser(user);
         postService.create(post);
         return "redirect:/api/posts";
     }
