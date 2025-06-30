@@ -3,8 +3,11 @@ package com.booklion.controller;
 
 import com.booklion.model.entity.Post;
 import com.booklion.model.entity.Users;
+import com.booklion.repository.UserRepository;
 import com.booklion.service.PostService;
+import com.booklion.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,13 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
-
+    private final UserRepository userRepository;
     /* 글 작성 페이지 */
     @GetMapping("/write")
     public String writePost(Model model) {
@@ -28,16 +33,10 @@ public class PostController {
     }
     /* 글 작성 로직 */
     @PostMapping
-    public String write(@ModelAttribute Post post, @ModelAttribute Users user) {
+    public String write(@ModelAttribute Post post, @RequestParam String username) {
 
-        /* 유저 객체를 받아야 함
-        Users user = new Users();
-        user.setUserId(1);
-        user.setUsername("test");
-        user.setPassword("test");
-        user.setEmail("test@test");
-        */
-        post.setUser(user);
+        Optional<Users> user = userRepository.findByUsername(username); //예외처리 필요
+        post.setUser(user.get());
         postService.create(post);
         return "redirect:/api/posts";
     }
@@ -89,7 +88,7 @@ public class PostController {
         post.recordView();
         postService.update(id, post);
         model.addAttribute("posts", post);
-
+        System.out.println(post.getTitle()+"!!!!!!!!!!!!!!!!!!!!!!!");
         return "review/review_detail";
     }
 }
