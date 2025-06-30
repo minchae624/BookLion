@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (res.ok && text === "success") {
         alert("회원가입이 완료되었습니다.");
-        window.location.href = "main.html";
+        window.location.href = "/";
       } else if (text === "duplicate") {
         alert("이미 사용 중인 ID입니다.");
       } else {

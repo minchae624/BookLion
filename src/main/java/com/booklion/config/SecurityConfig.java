@@ -1,4 +1,3 @@
-
 package com.booklion.config;
 
 import org.springframework.context.annotation.Bean;

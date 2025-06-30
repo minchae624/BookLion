@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const mypageBtn = document.getElementById("mypage-btn");
 
   const token = localStorage.getItem("token");
+  if (!token) {
+    alert("로그인이 필요합니다.");
+    window.location.href = "/login";
+    return;
+  }
 
   // 사용자 정보 가져오기
   if (token) {
@@ -33,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     alert("로그아웃되었습니다.");
-    window.location.href = "main.html";
+    window.location.href = "/";
   });
 
   // 마이페이지 이동
@@ -42,6 +47,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("로그인이 필요합니다.");
       return;
     }
-    window.location.href = "mypage.html";
+    window.location.href = "/mypage";
   });
 });

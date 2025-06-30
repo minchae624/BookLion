@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("로그인이 필요합니다.");
-    window.location.href = "login.html";
+    window.location.href = "/login";
     return;
   }
 
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error();
       alert("회원 탈퇴가 완료되었습니다.");
       localStorage.removeItem("token");
-      window.location.href = "main.html";
+      window.location.href = "/";
     } catch {
       alert("회원 탈퇴 실패");
     }
@@ -100,12 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     alert("로그아웃되었습니다.");
-    window.location.href = "main.html";
+    window.location.href = "/";
   });
 
   // 강제로 새로고침 포함 재이동
   mypageBtn.addEventListener("click", () => {
-  window.location.href = "mypage.html"; 
+  window.location.href = "/mypage"; 
 });
 
 });
