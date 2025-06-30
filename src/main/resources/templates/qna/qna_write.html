@@ -2,46 +2,103 @@
 <html lang="ko">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>책 먹는 사자 - 질문 작성</title>
-	<link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>책 먹는 사자 - 질문 작성</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
-	<header class="home-header">
-		<a href="/api/home">
-		  <img src="/img/linklogo.png" alt="홈으로" class="linklogo">
-		</a>
-		<div class="home-user-info">
-			<span>환영합니다. 멋사 님</span>
-			<div class="home-nav-buttons">
-				<a href="main.html" class="btn btn-secondary">로그아웃</a>
-				<a href="mypage.html" class="btn btn-secondary">마이페이지</a>
-			</div>
-		</div>
-	</header>
-	<main class="mypage-container">
-		<h3>질문 작성</h3>
-		<form class="signup-form">
-			<label for="category">카테고리</label>
-			<select id="category" name="category" class="input-field" required>
-				<option value="">선택</option>
-				<option value="책 추천">책 추천</option>
-				<option value="이벤트">이벤트</option>
-				<option value="기타">기타</option>
-			</select>
-			<label for="title">제목</label>
-			<input type="text" id="title" name="title" class="input-field" required>
-			<label for="content">내용</label>
-			<textarea id="content" name="content" class="input-field" rows="10" required
-				style="resize: vertical;"></textarea>
-			<div class="signup-button-group">
-				<a href="qna.html" class="btn btn-green">등록</a>
-				<a href="qna.html" class="btn btn-red">취소</a>
-			</div>
-		</form>
-	</main>
+  <header class="home-header">
+    <a href="/api/home">
+      <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+    </a>
+    <div class="home-user-info">
+      <span id="welcome-msg">환영합니다.</span>
+      <div class="home-nav-buttons">
+        <a href="main.html" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+        <a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mypage-container">
+    <h3>질문 작성</h3>
+    <form class="signup-form" id="question-form">
+      <label for="category">카테고리</label>
+      <select id="category" name="category" class="input-field" required>
+        <option value="">선택</option>
+        <option value="1">책 추천</option>
+        <option value="2">이벤트</option>
+        <option value="3">기타</option>
+      </select>
+
+      <label for="title">제목</label>
+      <input type="text" id="title" name="title" class="input-field" required />
+
+      <label for="content">내용</label>
+      <textarea id="content" name="content" class="input-field" rows="10" required style="resize: vertical;"></textarea>
+
+      <div class="signup-button-group">
+        <button type="submit" class="btn btn-green">등록</button>
+        <a href="qna.html" class="btn btn-red">취소</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("token");
+
+      // 사용자 이름 표시
+      fetch("/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(user => {
+          document.getElementById("welcome-msg").textContent = `환영합니다. ${user.username}님`;
+        })
+        .catch(() => {
+          document.getElementById("welcome-msg").textContent = `환영합니다.`;
+        });
+
+      // 로그아웃
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        window.location.href = "main.html";
+      });
+
+      // 질문 등록
+      document.getElementById("question-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+        const categoryId = document.getElementById("category").value;
+
+        try {
+          const res = await fetch("/questions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ title, content, categoryId })
+          });
+
+          if (!res.ok) throw new Error("질문 등록 실패");
+
+          const data = await res.json(); // { id: xxx }
+          alert("질문이 등록되었습니다.");
+          window.location.href = `/qna_detail.html?id=${data.id}`;
+        } catch (err) {
+          alert("에러 발생: " + err.message);
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

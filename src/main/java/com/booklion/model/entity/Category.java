@@ -18,11 +18,10 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long category_id;
 	
-	private String category;
+	private String name;
 
-	public void setCategory(String category) {
-		this.category = category;
-
+	public void setCategory(String name) {
+		this.name = name;
 	}
 
 }
