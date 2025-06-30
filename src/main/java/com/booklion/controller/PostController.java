@@ -5,9 +5,7 @@ import com.booklion.model.entity.Post;
 import com.booklion.model.entity.Users;
 import com.booklion.repository.UserRepository;
 import com.booklion.service.PostService;
-import com.booklion.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -88,7 +86,6 @@ public class PostController {
         post.recordView();
         postService.update(id, post);
         model.addAttribute("posts", post);
-        System.out.println(post.getTitle()+"!!!!!!!!!!!!!!!!!!!!!!!");
         return "review/review_detail";
     }
 }
