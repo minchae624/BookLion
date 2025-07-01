@@ -33,12 +33,23 @@ public class ReplyController {
         );
         return ResponseEntity.ok(responseDto);
     }
-
     
     // 댓글 목록 조회
     @GetMapping("/posts/{postId}/replies")
-    public ResponseEntity<List<Reply>> getReplies(@PathVariable Long postId) {
-        return ResponseEntity.ok(replyService.getRepliesByPost(postId));
+    public ResponseEntity<List<ReplyResponseDto>> getReplies(@PathVariable Long postId) {
+        List<Reply> replies = replyService.getRepliesByPost(postId);
+
+        List<ReplyResponseDto> responseDtos = replies.stream()
+            .map(reply -> new ReplyResponseDto(
+                reply.getReply_id(),
+                reply.getPost().getPostId(),
+                reply.getUser().getUserId().longValue(),
+                reply.getContent(),
+                reply.getWritingtime()
+            ))
+            .toList();
+
+        return ResponseEntity.ok(responseDtos);
     }
 
     // 댓글 개수 조회
