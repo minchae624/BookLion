@@ -45,4 +45,12 @@ public class Reply {
 		this.writingtime = writingtime;
 	}
 
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
+	public void setUser(Users user) {
+		this.user = user;
+	}
+
 }

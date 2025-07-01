@@ -26,9 +26,9 @@
 		<div style="margin: 1rem 0;">
 			<p>
 				<strong th:text="|[책제목] ${posts.booktitle}|">[책제목]</strong> | &nbsp;
-				<strong th:text="|[작가] ${posts.author}|">[작가]</strong>  &nbsp; | &nbsp;
-				<strong th:text="|[장르] ${posts.genre}|">[장르]</strong>  &nbsp; | &nbsp;
-				<strong th:text="|[글쓴이] ${posts.user.username}|">[글쓴이]</strong>  &nbsp; | &nbsp;
+				<strong th:text="|[작가] ${posts.author}|">[작가]</strong> &nbsp; | &nbsp;
+				<strong th:text="|[장르] ${posts.genre}|">[장르]</strong> &nbsp; | &nbsp;
+				<strong th:text="|[글쓴이] ${posts.user.username}|">[글쓴이]</strong> &nbsp; | &nbsp;
 				<strong th:text="|[작성일] ${#temporals.format(posts.writingtime,'yyyy-MM-dd')}|">[작성일]</strong>
 				<strong th:text="|[별점] ${posts.rating}|">[별점]</strong>&nbsp;
 				<strong th:text="|조회수 ${posts.viewCount}|">[조회수]</strong>&nbsp;
@@ -53,12 +53,15 @@
 			<p style="text-align: right; font-size: 0.9rem;">2025.06.24</p>
 		</div>
 		<div style="margin-top: 2rem;">
+			<input type="hidden" id="user-name" th:value="${username}" />
+			<input type="hidden" id="user-id" th:value="${userId}" />
 			<label for="new-comment"><strong>댓글 작성</strong></label>
 			<textarea id="new-comment" rows="5" class="input-field" placeholder="댓글을 입력하세요."></textarea>
 			<div style="text-align: right; margin-top: 0.5rem;">
-				<a href="review_detail.html" class="btn btn-blue">등록</a>
+				<button id="submit-reply" class="btn btn-blue">등록</button>
 			</div>
 		</div>
+		<div id="reply-list" style="margin-top: 2rem;"></div>
 	</main>
 	<script src="/js/review.js"></script>
 </body>
