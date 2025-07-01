@@ -1,11 +1,17 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   datasource:
+<<<<<<< HEAD
     url: jdbc:mysql://localhost:3306/BookLion?serverTimezone=Asia/Seoul
     username: mydb    
     password: mimmim7nc2!
+=======
+    url: jdbc:mysql://192.168.45.131:3306/BookLion?serverTimezone=Asia/Seoul
+    username: anhj
+    password: wns651212!
+>>>>>>> c83fba7 (feature: user(완)+post(완)+reply(미완))
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
