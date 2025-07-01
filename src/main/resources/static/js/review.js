@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const userNameInput = document.getElementById("user-name");
                 if(userIdInput) userIdInput.value = user.userId;
                 if(userNameInput) userNameInput.value = user.username;
+
+                /* 글쓴이와 접속자가 일치한지 확인 */
+                const postWriterInput = document.getElementById("post-writer");
+                const editDeleteBtn = document.getElementById("edit-delete-btn");
+
+                if (postWriterInput && editDeleteBtn) {
+                    if (String(user.userId) !== String(postWriterInput.value)) {
+                        editDeleteBtn.style.display = "none";
+                    }
+                }
             } else {
                 welcomeMsg.textContent = "환영합니다.";
             }
@@ -31,6 +41,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     } else {
         welcomeMsg.textContent = "환영합니다.";
+    }
+
+    // 글 삭제 처리
+    window.deletePost = function(postId) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            fetch(`/api/posts/delete/${postId}`, {
+                method: 'DELETE'
+            }).then(res => {
+                if(res.ok) {
+                    alert("삭제되었습니다.");
+                    window.location.href="/api/posts";
+                } else {
+                    alert("삭제 실패!");
+                }
+            });
+        }
     }
 
     // 로그아웃 처리

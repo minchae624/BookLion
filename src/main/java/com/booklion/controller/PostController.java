@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,25 @@ public class PostController {
     public String writePost(Model model) {
         model.addAttribute("post", new Post());
         return "review/review_write";
+    }
+    /* 글 수정 페이지 */
+    @GetMapping("/update/{id}")
+    public String updatePost(@PathVariable Long id ,Model model) {
+        Post ex_post = postService.findById(id);
+        model.addAttribute("post", ex_post);
+        return "review/review_update";
+    }
+    /* 글 수정 로직 */
+    @PostMapping("/update/{id}")
+    public String updatePost(@PathVariable Long id, Post post) {
+        postService.update(id, post);
+        return "redirect:/api/posts";
+    }
+    /* 글 삭제 로직 */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        postService.delete(id);
+        return ResponseEntity.ok().build();
     }
     /* 글 작성 로직 */
     @PostMapping
