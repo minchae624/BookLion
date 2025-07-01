@@ -64,6 +64,9 @@ public class ReplyService {
     }
 
     public void deleteReply(Long replyId) {
+    	if (!replyRepository.existsById(replyId)) {
+            throw new IllegalArgumentException("삭제할 댓글이 없습니다.");
+        }
         replyRepository.deleteById(replyId);
     }
 
