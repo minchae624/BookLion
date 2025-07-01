@@ -74,4 +74,58 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         window.location.href = "/mypage";
     });
+
+
+    // 댓글 등록 기능 추가
+    const commentBtn = document.querySelector(".btn-blue");
+    const commentTextarea = document.getElementById("new-comment");
+    const userIdInput = document.getElementById("user-id");
+
+    if (commentBtn && commentTextarea && userIdInput) {
+        commentBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const content = commentTextarea.value.trim();
+            if (!content) {
+                alert("댓글을 입력해주세요.");
+                return;
+            }
+
+            const postId = window.location.pathname.split("/").pop();
+            const token = localStorage.getItem("token");
+            const userId = userIdInput.value;
+
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                return;
+            }
+
+            if (!userId) {
+                alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/posts/${postId}/replies`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({ content, userId: Number(userId) })
+                });
+
+                if (res.ok) {
+                    alert("댓글이 등록되었습니다.");
+                    window.location.reload();
+                } else {
+                    const error = await res.text();
+                    alert("댓글 등록 실패: " + error);
+                }
+            } catch (err) {
+                console.error("댓글 등록 오류:", err);
+                alert("댓글 등록 중 오류가 발생했습니다.");
+            }
+        });
+    }
 });
