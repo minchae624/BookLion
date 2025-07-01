@@ -177,3 +177,11 @@ body {
   align-items: center;
   margin-bottom: 1rem;
 }
+
+/* 말줄임 처리 CSS */
+.ellipsis {
+  white-space: nowrap;       /* 줄바꿈 안 함 */
+  overflow: hidden;          /* 넘치는 내용 감춤 */
+  text-overflow: ellipsis;   /* 말줄임표 (...) 표시 */
+  max-width: 200px;          /* 최대 너비 (원하는 값으로 조절 가능) */
+}

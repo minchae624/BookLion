@@ -51,21 +51,24 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="post:${posts}" style="text-align: center;">
-					<td th:text="${post.postId}"></td>
-					<td th:text="${post.genre}"></td>
-					<td><a th:href="@{/api/posts/{id}(id=${post.postId})}" style="text-decoration: none; color: #333;" th:text="${post.title}">게시글 제목</a></td>
-					<td th:text="${post.user.username}"></td>
-					<td th:text="${#temporals.format(post.writingtime,'yyyy-MM-dd')}">2024-06-25</td>
-					<td th:text="${post.viewCount ?: 0}"></td>
-					<td th:text="${#lists.size(post.likes)}"></td>
+				<tr th:each="post:${posts}"
+					th:onclick="|window.location.href='/api/posts/${post.postId}'|"
+					style="text-align: center;">
+					<td class = "ellipsis" th:text="${post.postId}"></td>
+					<td class = "ellipsis" th:text="${post.genre}"></td>
+					<td class = "ellipsis" ><a th:href="@{/api/posts/{id}(id=${post.postId})}" style="text-decoration: none; color: #333;" th:text="${post.title}" th:title="${post.title}">게시글 제목</a></td>
+					<td class = "ellipsis" th:text="${post.user.username}"></td>
+					<td class = "ellipsis"  th:text="${#temporals.format(post.writingtime,'yyyy-MM-dd')}">2024-06-25</td>
+					<td class = "ellipsis"  th:text="${post.viewCount ?: 0}"></td>
+					<td class = "ellipsis"  th:text="${#lists.size(post.likes)}"></td>
 				</tr>
 			</tbody>
 		</table>
 
 		<!-- 페이징 영역 -->
 		<!-- 이전 버튼 -->
-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+		<div th:if="${page.totalElements > 0}"
+			 style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
 			<span th:if="${page.hasPrevious()}">
 				<a th:href="@{/api/posts(page=${page.number - 1}, keyword=${keyword}, input=${input})}" class="btn btn-secondary">이전</a>
 			</span>

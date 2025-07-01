@@ -72,6 +72,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("로그인이 필요합니다.");
             return;
         }
-        window.location.href = "/mypage.html";
+        window.location.href = "/mypage";
     });
 });
