@@ -15,11 +15,10 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name="Answers")
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Answers {
@@ -29,7 +28,7 @@ public class Answers {
 	
 	private String content;
 	
-	private LocalDateTime writingtime;
+	 private LocalDateTime writingtime = LocalDateTime.now();
 	
 	@Enumerated(EnumType.STRING)
 	private AnswerStatus isAccepted;
@@ -41,6 +40,22 @@ public class Answers {
 	@ManyToOne
 	@JoinColumn(name="quest_id")
 	private Questions question;
-	
 
+	public void setUser(Users user) {
+		this.user = user;
+	}
+	
+	public void setQuestion(Questions question) {
+		this.question = question;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public void setIsAccepted(AnswerStatus isAccepted) {
+		this.isAccepted = isAccepted;
+	}
+
+	
 }

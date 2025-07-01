@@ -27,7 +27,10 @@ public class ReplyService {
     public Reply createReply(Long postId, ReplyRequestDto replyDto) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-        User user = userRepository.findById(replyDto.getUserId())
+
+        Integer userId = Math.toIntExact(replyDto.getUserId());
+        
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Reply reply = new Reply();
@@ -63,4 +66,6 @@ public class ReplyService {
     public void deleteReply(Long replyId) {
         replyRepository.deleteById(replyId);
     }
+
 }
+

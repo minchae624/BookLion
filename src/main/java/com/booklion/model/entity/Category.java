@@ -1,11 +1,7 @@
 package com.booklion.model.entity;
 
-<<<<<<< comment
-=======
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
->>>>>>> dev
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-<<<<<<< comment
 
 @Entity
 @Table(name = "Category")
@@ -30,19 +25,4 @@ public class Category {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-=======
-import lombok.Setter;
-
-@Entity
-@Table(name = "Category")
-@Getter @Setter
-@NoArgsConstructor
-public class Category {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long category_id;
-	
-	private String category;
->>>>>>> dev
 }

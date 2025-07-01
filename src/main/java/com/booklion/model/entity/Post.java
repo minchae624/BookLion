@@ -40,6 +40,18 @@ public class Post {
 
     private Integer replyCount;
 
+    // 조회수 증가 로직
+    public void recordView() {
+        if (viewCount==null) viewCount=0;
+        this.viewCount++;
+    }
+
+    // 댓글 수 증가 로직
+    public void recordReply() {
+        if (replyCount==null) replyCount=0;
+        this.replyCount++;
+    }
+
     public void setUser(Users user) {
         this.user = user;
     }

@@ -1,47 +1,45 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - 감상평 상세</title>
-	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
 	<header class="home-header">
-		<a href="/">
+		<a href="/api/home">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
-			<span>환영합니다. 멋사 님</span>
+			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<a href="main.html" class="btn btn-secondary">로그아웃</a>
-				<a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
+				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
 			</div>
 		</div>
 	</header>
 	<main class="review-detail-container">
-		<h3>제목: 내 인생 책</h3>
+		<h3 th:text="|제목: ${posts.title}|"></h3>
 		<div style="margin: 1rem 0;">
 			<p>
-				<strong>[책제목]</strong> 오페라의 유령 &nbsp; | &nbsp;
-				<strong>[작가]</strong> 가스통 르루 &nbsp; | &nbsp;
-				<strong>[장르]</strong> 로맨스 &nbsp; | &nbsp;
-				<strong>[글쓴이]</strong> 멋사 &nbsp; | &nbsp;
-				<strong>[작성일]</strong> 2025.06.25 &nbsp;
-				<strong>[별점]</strong>&nbsp; 5.0
-				<strong>[조회수]</strong>&nbsp; 15
+				<strong th:text="|[책제목] ${posts.booktitle}|">[책제목]</strong> | &nbsp;
+				<strong th:text="|[작가] ${posts.author}|">[작가]</strong> &nbsp; | &nbsp;
+				<strong th:text="|[장르] ${posts.genre}|">[장르]</strong> &nbsp; | &nbsp;
+				<strong th:text="|[글쓴이] ${posts.user.username}|">[글쓴이]</strong> &nbsp; | &nbsp;
+				<strong th:text="|[작성일] ${#temporals.format(posts.writingtime,'yyyy-MM-dd')}|">[작성일]</strong>
+				<strong th:text="|[별점] ${posts.rating}|">[별점]</strong>&nbsp;
+				<strong th:text="|조회수 ${posts.viewCount}|">[조회수]</strong>&nbsp;
 			</p>
 		</div>
 		<div style="padding: 1rem; background-color: #eee; border-radius: 6px; margin-bottom: 1rem; line-height: 1.6;">
-			<p>나 사실 이거 잘 모름</p>
-			<p>나 사실 이거 잘 모른다니까</p>
-			<p>나 사실 이거 잘 모른다고</p>
+			<p th:text="${posts.content}"></p>
 		</div>
 		<div style="text-align: center; margin: 2rem 0;">
 			<button class="btn btn-red">좋아요</button>
-			<p style="margin-top: 0.5rem;">15</p>
+			<p style="margin-top: 0.5rem;" th:text="${#lists.size(posts.likes)}"></p>
 		</div>
 		<p style="text-align: right; font-size: 0.9rem;">
 			<a href="#" style="margin-right: 1rem;">수정</a>
@@ -55,13 +53,17 @@
 			<p style="text-align: right; font-size: 0.9rem;">2025.06.24</p>
 		</div>
 		<div style="margin-top: 2rem;">
+			<input type="hidden" id="user-name" th:value="${username}" />
+			<input type="hidden" id="user-id" th:value="${userId}" />
 			<label for="new-comment"><strong>댓글 작성</strong></label>
 			<textarea id="new-comment" rows="5" class="input-field" placeholder="댓글을 입력하세요."></textarea>
 			<div style="text-align: right; margin-top: 0.5rem;">
-				<a href="review_detail.html" class="btn btn-blue">등록</a>
+				<button id="submit-reply" class="btn btn-blue">등록</button>
 			</div>
 		</div>
+		<div id="reply-list" style="margin-top: 2rem;"></div>
 	</main>
+	<script src="/js/review.js"></script>
 </body>
 
 </html>
