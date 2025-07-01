@@ -8,6 +8,8 @@ import com.booklion.repository.CategoryRepository;
 import com.booklion.repository.QuestionRepository;
 import com.booklion.service.QuestionService;
 import com.booklion.service.UserService;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -65,7 +67,38 @@ public class QuestionController {
 	@GetMapping("/questions")
 	@ResponseBody
 	public List<Questions> listQuestions() {
-		return questionRepository.findAll();
+	    return questionRepository.findAllWithCategoryAndUser();
 	}
+	
+	@PutMapping("/questions/{id}")
+	@ResponseBody
+	public Questions getQuestionAndIncreaseView(@PathVariable Integer id) {
+	    Questions question = questionRepository.findById(id)
+	        .orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
+	    question.recordView();
+	    return questionRepository.save(question);
+	}
+	
+	@GetMapping("/qna")
+	public String showQuestionList(Model model) {
+	    List<Questions> questions = questionRepository.findAllWithCategoryAndUser();
+	    model.addAttribute("questions", questions);
+	    return "qna/qna"; 
+	}
+
+
+	@GetMapping("/qna_detail")
+	public String showQnaDetail(@RequestParam("id") Integer id, Model model) {
+	    Questions question = questionRepository.findById(id)
+	        .orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
+	    question.recordView(); // 조회수 증가
+	    questionRepository.save(question);
+	    model.addAttribute("question", question);
+	    return "qna/qna_detail";
+	}
+
+
+
+
 
 }

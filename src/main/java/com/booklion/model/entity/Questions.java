@@ -57,6 +57,7 @@ public class Questions {
 	@ManyToOne
 	@JoinColumn(name="category_id")
 	private Category category;
+
 	
 	@OneToMany(mappedBy="question",cascade=CascadeType.ALL)
 	private List<Answers> answer=new ArrayList<>();

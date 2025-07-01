@@ -17,6 +17,9 @@ public interface QuestionRepository extends JpaRepository<Questions, Integer> {
 			+ "AND (q.title LIKE %:keyword% OR q.content LIKE %:keyword%)")
 	List<Questions> searchByCategoryAndKeyword(@Param("categoryId") Integer categoryId,
 			@Param("keyword") String keyword);
+	
+	@Query("SELECT q FROM Questions q JOIN FETCH q.category JOIN FETCH q.user")
+	List<Questions> findAllWithCategoryAndUser();
 
 	List<Questions> findByUser_UserId(Integer userId);
 	List<Questions> findAllByOrderByQuestIdDesc();
