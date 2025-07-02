@@ -5,55 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>책 먹는 사자 - Q&A 상세</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/qna_detail.css" />
+  <script th:src="@{/js/frontshared.js}" defer></script>
 </head>
 
 <body>
   <header class="home-header">
-    <a href="/">
-      <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+    <a href="http://localhost:8080/api/home">
+      <img src="/img/linklogo.png" alt="홈으로" class="linklogo">
     </a>
     <div class="home-user-info">
       <span id="welcome-msg">환영합니다.</span>
-      <script th:src="@{/js/frontshared.js}"></script>
       <div class="home-nav-buttons">
-        <a href="/logout" class="btn btn-secondary">로그아웃</a>
-        <a href="/mypage" class="btn btn-secondary">마이페이지</a>
+        <a href="/logout" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+        <a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
       </div>
     </div>
   </header>
 
+  <!-- 로그인 유저 확인용 -->
+  <span id="login-username" style="display: none;"
+        th:if="${loginUser != null}"
+        th:text="${loginUser.username}"></span>
+
   <main class="review-detail-container">
     <h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
 
-    <div class="question-meta" style="margin: 1rem 0;">
-      <strong>[카테고리]</strong> <span th:text="${question.category.category}">카테고리</span> &nbsp; | &nbsp;
-      <strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> &nbsp; | &nbsp;
-      <strong>[작성일]</strong> <span th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> &nbsp; | &nbsp;
-      <strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> &nbsp; | &nbsp;
-      <strong>[상태]</strong>
-      <span th:text="${question.status == 'SOLVED' ? '해결' : '미해결'}"
-            th:style="${question.status == 'SOLVED'} ? 'color:green' : 'color:red'">미해결</span>
+    <div class="question-wrapper">
+      <div class="question-meta">
+        <strong>[카테고리]</strong> <span th:text="${question.category.category}">카테고리</span> |
+        <strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
+        <strong>[작성일]</strong> <span th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
+        <strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
+        <strong>[상태]</strong>
+        <span th:text="${question.status == 'SOLVED' ? '해결' : '미해결'}"
+              th:style="${question.status == 'SOLVED'} ? 'color:green' : 'color:red'">미해결</span>
+      </div>
+
+      <!-- 본인 글일 때만 수정/삭제 버튼 -->
+      <div class="question-actions"
+           th:if="${loginUser != null and question.user.username == loginUser.username}">
+        <a th:href="@{/questions/edit/{id}(id=${question.questId})}"
+           class="btn btn-secondary" style="margin-right: 0.5rem;">수정</a>
+
+        <form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
+              style="display:inline;">
+          <button type="submit" class="btn btn-secondary">삭제</button>
+        </form>
+      </div>
+
+      <div class="question-content">
+        <pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
+      </div>
     </div>
 
-    <div class="question-content" style="padding: 1rem; background-color: #eee; border-radius: 6px; margin-bottom: 1.5rem; line-height: 1.6;">
-      <pre th:text="${question.content}">질문 본문</pre>
-    </div>
+    <!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
+	<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post"
+	      th:if="${loginUser != null}" 
+	      style="text-align: center; margin-top: 2rem;">
+	  <button type="submit" class="btn btn-blue">좋아요</button>
+	</form>
 
-    <p style="text-align: right; font-size: 0.9rem;">
-      <a href="#" style="margin-right: 1rem;">수정</a>
-      <a href="#" style="color: red;">삭제</a>
-    </p>
+	<p style="text-align: center; margin-top: 0.5rem;">
+	  <span th:text="${question.likeCount}">0</span>
+	</p>
 
-    <hr style="margin: 2rem 0;" />
+	<!-- 좋아요 메시지 JS alert 처리 -->
+	<div id="message" th:if="${message}" th:data-msg="${message}"></div>
 
-    <!-- 댓글 영역 -->
-    <div style="margin-top: 2rem;">
+	<script>
+	  document.addEventListener("DOMContentLoaded", () => {
+	    const msgDiv = document.getElementById("message");
+	    if (msgDiv) {
+	      const message = msgDiv.dataset.msg;
+	      if (message) {
+	        alert(message); // 팝업 표시
+	      }
+	    }
+	  });
+	</script>
+
+    <!-- 댓글 작성 영역 -->
+    <div class="comment-section">
       <label for="new-comment"><strong>댓글 작성</strong></label>
       <textarea id="new-comment" rows="5" class="input-field" placeholder="댓글을 입력하세요."></textarea>
       <div style="text-align: right; margin-top: 0.5rem;">
-        <button class="btn btn-blue">등록</button>
+        <button class="btn-blue">등록</button>
       </div>
     </div>
   </main>
+  
+  <!-- 좋아요 후 메시지 alert -->
+  		 <script th:if="${message != null}">
+  		   alert([[${message}]]);
+  		 </script>
+		
 </body>
 </html>

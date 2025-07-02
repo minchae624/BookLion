@@ -1,104 +1,140 @@
 package com.booklion.controller;
 
-import com.booklion.model.entity.Category;
-import com.booklion.model.entity.Questions;
-import com.booklion.model.entity.Users;
-import com.booklion.model.entity.QuestionStatus;
-import com.booklion.repository.CategoryRepository;
-import com.booklion.repository.QuestionRepository;
-import com.booklion.service.QuestionService;
-import com.booklion.service.UserService;
-
+import com.booklion.model.entity.*;
+import com.booklion.repository.*;
+import com.booklion.service.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class QuestionController {
 
-	private final QuestionService questionService;
-	private final QuestionRepository questionRepository;
-	private final CategoryRepository categoryRepository;
-	private final UserService userService;
+    private final QuestionService questionService;
+    private final QuestionRepository questionRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
-	@GetMapping("/questions/write")
-	public String showWriteForm(Model model) {
-		model.addAttribute("question", new Questions());
-		model.addAttribute("categories", categoryRepository.findAll());
-		return "qna/qna_write";
-	}
+    // 질문 작성 폼
+    @GetMapping("/questions/write")
+    public String showWriteForm(Model model) {
+        model.addAttribute("question", new Questions());
+        model.addAttribute("categories", categoryRepository.findAll());
+        return "qna/qna_write";
+    }
 
-	@PostMapping("/questions")
-	public ResponseEntity<?> createQuestion(@RequestBody Map<String, Object> payload,
-			@RequestHeader("Authorization") String token) {
-		String title = (String) payload.get("title");
-		String content = (String) payload.get("content");
-		Long categoryId = Long.parseLong(payload.get("categoryId").toString());
+    // 질문 작성 처리
+    @PostMapping("/questions/write")
+    public String createQuestion(@ModelAttribute Questions question,
+                                 @SessionAttribute("loginUser") Users loginUser) {
+        question.setUser(loginUser);
+        question.setWritingtime(LocalDateTime.now());
+        question.setStatus(QuestionStatus.unsolved);
+        question.setViewCount(0);
+        question.setLikeCount(0);
+        Questions saved = questionRepository.save(question);
+        return "redirect:/qna_detail?id=" + saved.getQuestId();
+    }
 
-		Users user = userService.getUserInfoFromToken(token.replace("Bearer ", ""));
-		Category category = categoryRepository.findById(categoryId)
-				.orElseThrow(() -> new IllegalArgumentException("카테고리 없음"));
+    // 질문 목록 + 검색 + 페이징
+    @GetMapping("/qna")
+    public String showQuestionList(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(required = false) String keyword,
+                                   @RequestParam(required = false) String input,
+                                   @SessionAttribute(name = "loginUser", required = false) Users loginUser,
+                                   Model model) {
 
-		Questions question = Questions.builder()
-				.title(title)
-				.content(content)
-				.category(category)
-				.user(user)
-				.status(QuestionStatus.unsolved)
-				.viewCount(0)
-				.likeCount(0)
-				.writingtime(LocalDateTime.now())
-				.build();
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
 
-		Questions saved = questionService.saveQuestion(question);
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
+        Page<Questions> questionPage = questionService.getPageQuestions(keyword, input, pageable);
 
-		return ResponseEntity.ok(Map.of("id", saved.getQuestId()));
-	}
+        model.addAttribute("page", questionPage); // 페이징 전체 정보
+        model.addAttribute("questions", questionPage.getContent()); // 현재 페이지 질문 리스트
+        model.addAttribute("loginUser", loginUser);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("input", input);
 
-	@GetMapping("/questions")
-	@ResponseBody
-	public List<Questions> listQuestions() {
-	    return questionRepository.findAllWithCategoryAndUser();
-	}
-	
-	@PutMapping("/questions/{id}")
-	@ResponseBody
-	public Questions getQuestionAndIncreaseView(@PathVariable Integer id) {
-	    Questions question = questionRepository.findById(id)
-	        .orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
-	    question.recordView();
-	    return questionRepository.save(question);
-	}
-	
-	@GetMapping("/qna")
-	public String showQuestionList(Model model) {
-	    List<Questions> questions = questionRepository.findAllWithCategoryAndUser();
-	    model.addAttribute("questions", questions);
-	    return "qna/qna"; 
-	}
-
-
-	@GetMapping("/qna_detail")
-	public String showQnaDetail(@RequestParam("id") Integer id, Model model) {
-	    Questions question = questionRepository.findById(id)
-	        .orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
-	    question.recordView(); // 조회수 증가
-	    questionRepository.save(question);
-	    model.addAttribute("question", question);
-	    return "qna/qna_detail";
-	}
+        return "qna/qna"; // 템플릿 경로
+    }
+    
+    @GetMapping("/questions")
+    @ResponseBody
+    public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(required = false) String keyword,
+                                        @RequestParam(required = false) String input) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
+        return questionService.getPageQuestions(keyword, input, pageable);
+    }
 
 
 
+    // 질문 상세
+    @GetMapping("/qna_detail")
+    public String showQnaDetail(@RequestParam("id") Integer id,
+                                @RequestParam(value = "view", defaultValue = "true") boolean shouldIncreaseView,
+                                HttpSession session,
+                                Model model) {
+        Users loginUser = (Users) session.getAttribute("loginUser");
+        Questions question = questionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
 
+        if (shouldIncreaseView) {
+            question.recordView();
+            questionRepository.save(question);
+        }
 
+        model.addAttribute("question", question);
+        model.addAttribute("loginUser", loginUser);
+        return "qna/qna_detail";
+    }
+
+    // 좋아요
+    @PostMapping("/questions/{id}/like")
+    public String likeQuestion(@PathVariable Integer id,
+                               @SessionAttribute("loginUser") Users loginUser,
+                               RedirectAttributes redirectAttributes) {
+        boolean liked = questionService.likeQuestion(id, loginUser);
+        if (liked) {
+            redirectAttributes.addFlashAttribute("message", "좋아요를 눌렀습니다.");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "이미 좋아요를 누르셨습니다.");
+        }
+        return "redirect:/qna_detail?id=" + id + "&view=false";
+    }
+
+    // 수정 폼
+    @GetMapping("/questions/edit/{id}")
+    public String showEditForm(@PathVariable Integer id, Model model) {
+        Questions question = questionService.findById(id);
+        model.addAttribute("question", question);
+        model.addAttribute("categories", categoryRepository.findAll());
+        return "qna/qna_edit";
+    }
+
+    // 수정 처리
+    @PostMapping("/questions/edit/{id}")
+    public String updateQuestion(@PathVariable Integer id, @ModelAttribute Questions updated) {
+        questionService.update(id, updated);
+        return "redirect:/qna_detail?id=" + id;
+    }
+
+    // 삭제
+    @PostMapping("/questions/delete/{id}")
+    public String deleteQuestion(@PathVariable Integer id) {
+        questionService.deleteQuestion(id);
+        return "redirect:/qna";
+    }
 }

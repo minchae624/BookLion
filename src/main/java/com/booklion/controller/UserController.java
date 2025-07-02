@@ -4,6 +4,7 @@ import com.booklion.model.entity.Users;
 import com.booklion.service.UserService;
 import com.booklion.util.JwtUtil;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload, HttpSession session) {
         String username = payload.get("username");
         String password = payload.get("password");
 
@@ -57,7 +58,9 @@ public class UserController {
         }
 
         String token = jwtUtil.generateToken(user.getUsername());
-
+        
+        session.setAttribute("loginUser", user);
+        
         Map<String, Object> response = new HashMap<>();
         response.put("userId", user.getUserId());
         response.put("username", user.getUsername());
@@ -66,6 +69,16 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/info")
+    public Map<String, Object> getUserInfo(@SessionAttribute(name = "loginUser", required = false) Users loginUser) {
+        Map<String, Object> result = new HashMap<>();
+        if (loginUser != null) {
+            result.put("username", loginUser.getUsername());
+        }
+        return result;
+    }
+
 
     // 회원정보 조회
     @GetMapping("/me")

@@ -68,6 +68,11 @@ public class Questions {
 	public void prePersist() {
 	    if (this.likeCount == null) this.likeCount = 0;
 	}
+	public void increaseLike() {
+	    if (this.likeCount == null) this.likeCount = 0;
+	    this.likeCount++;
+	}
+
 
 
 	public Integer getQuestId() {
@@ -101,6 +106,9 @@ public class Questions {
 
 	public void setViewCount(Integer viewCount) {
 		this.viewCount = viewCount;
+	}
+	public void setLikeCount(int likeCount) {
+	    this.likeCount = likeCount;
 	}
 
 

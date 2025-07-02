@@ -50,7 +50,6 @@
     document.addEventListener("DOMContentLoaded", () => {
       const token = localStorage.getItem("token");
 
-      // 사용자 이름 표시
       fetch("/api/users/me", {
         headers: {
           Authorization: `Bearer ${token}`
@@ -64,13 +63,11 @@
           document.getElementById("welcome-msg").textContent = `환영합니다.`;
         });
 
-      // 로그아웃
       document.getElementById("logout-btn").addEventListener("click", () => {
         localStorage.removeItem("token");
         window.location.href = "main.html";
       });
 
-      // 질문 등록
       document.getElementById("question-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -90,9 +87,9 @@
 
           if (!res.ok) throw new Error("질문 등록 실패");
 
-          const data = await res.json(); // { id: xxx }
+          const data = await res.json(); 
           alert("질문이 등록되었습니다.");
-          window.location.href = `/qna_detail.html?id=${data.id}`;
+          window.location.href = `/qna_detail?id=${data.id}`;
         } catch (err) {
           alert("에러 발생: " + err.message);
         }
