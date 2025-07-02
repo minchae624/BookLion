@@ -15,10 +15,8 @@ import com.booklion.model.entity.Questions;
 @Repository
 public interface QuestionRepository extends JpaRepository<Questions, Integer> {
 
-	@Query("SELECT q FROM Questions q " + "WHERE q.category.category_id = :categoryId "
-			+ "AND (q.title LIKE %:keyword% OR q.content LIKE %:keyword%)")
-	List<Questions> searchByCategoryAndKeyword(@Param("categoryId") Integer categoryId,
-			@Param("keyword") String keyword);
+    @Query("SELECT q FROM Questions q WHERE q.category.categoryId = :categoryId AND (q.title LIKE %:keyword% OR q.content LIKE %:keyword%)")
+    List<Questions> searchByCategoryAndKeyword(@Param("categoryId") Integer categoryId, @Param("keyword") String keyword);
 	
 	@Query("SELECT q FROM Questions q")
 	@EntityGraph(attributePaths = {"category", "user"}) 

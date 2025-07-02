@@ -20,9 +20,10 @@ public class Category {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long category_id;
+    @Column(name = "category_id")
+	private Integer categoryId;
 	
-	@Column(name = "category")
+    @Column(nullable = false)
 	private String category;
 
 	public void setCategory(String category) {

@@ -8,9 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.booklion.model.entity.Category;
 import com.booklion.model.entity.Like;
 import com.booklion.model.entity.Questions;
 import com.booklion.model.entity.Users;
+import com.booklion.repository.CategoryRepository;
 import com.booklion.repository.LikeRepository;
 import com.booklion.repository.QuestionRepository;
 
@@ -24,6 +26,7 @@ public class QuestionService {
 
 	private final QuestionRepository questionRepository;
 	private final LikeRepository likeRepository;
+	private final CategoryRepository categoryRepository;
 	
 	public List<Questions> getAllQuestions() {
 		return questionRepository.findAllByOrderByQuestIdDesc();
@@ -54,12 +57,21 @@ public class QuestionService {
 	
 	public void update(Integer id, Questions updated) {
 	    Questions existing = questionRepository.findById(id).orElseThrow();
+
+	    if (updated.getCategory() != null && updated.getCategory().getCategoryId() == null) {
+	        Category savedCategory = categoryRepository.save(updated.getCategory());
+	        updated.setCategory(savedCategory); 
+	    }
+
 	    existing.setTitle(updated.getTitle());
 	    existing.setContent(updated.getContent());
 	    existing.setCategory(updated.getCategory());
 	    existing.setStatus(updated.getStatus());
+
 	    questionRepository.save(existing);
 	}
+
+
 
 	public void delete(Integer id) {
 	    questionRepository.deleteById(id);
@@ -85,11 +97,9 @@ public class QuestionService {
 	}
 
 	public List<Questions> searchByCategoryAndKeyword(Integer categoryId, String keyword) {
-		if (categoryId == null || keyword == null || keyword.trim().isEmpty()) {
-            throw new IllegalArgumentException("카테고리와 키워드는 필수입니다.");
-        }
+	    return questionRepository.searchByCategoryAndKeyword(categoryId,keyword);
+	}
 
-	    return questionRepository.searchByCategoryAndKeyword(categoryId, keyword);	}
 
 	public Page<Questions> getPageQuestions(String keyword, String input, Pageable pageable) {
 	    if (keyword != null && input != null && !input.trim().isEmpty()) {

@@ -24,6 +24,7 @@ public class QuestionController {
     private final CategoryRepository categoryRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final categoryService categoryService;
 
     // 질문 작성 폼
     @GetMapping("/questions/write")
@@ -126,9 +127,15 @@ public class QuestionController {
 
     // 수정 처리
     @PostMapping("/questions/edit/{id}")
-    public String updateQuestion(@PathVariable Integer id, @ModelAttribute Questions updated) {
+    public String updateQuestion(@PathVariable Integer id, 
+                                 @RequestParam("categoryId") Long categoryId, 
+                                 @ModelAttribute Questions updated) {
+
+        Category category = categoryService.getCategoryById(categoryId);
+        updated.setCategory(category);
+
         questionService.update(id, updated);
-        return "redirect:/qna_detail?id=" + id;
+        return "redirect:/qna_detail?id=" + id;  
     }
 
     // 삭제
