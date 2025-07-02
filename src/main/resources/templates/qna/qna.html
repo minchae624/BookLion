@@ -75,7 +75,7 @@
 	      const row = document.createElement("tr");
 	      row.innerHTML = `
 	        <td>${idx + 1 + currentPage * 10}</td>
-	        <td>${q.category?.category || "-"}</td>
+	        <td>${q.categoryId || "-"}</td> 
 	        <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
 	        <td>${q.user?.username || "-"}</td>
 	        <td>${q.writingtime?.substring(0, 10) || "-"}</td>

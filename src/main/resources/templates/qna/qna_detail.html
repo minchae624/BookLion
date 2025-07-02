@@ -23,7 +23,6 @@
     </div>
   </header>
 
-  <!-- 로그인 유저 확인용 -->
   <span id="login-username" style="display: none;"
         th:if="${loginUser != null}"
         th:text="${loginUser.username}"></span>
@@ -33,7 +32,7 @@
 
     <div class="question-wrapper">
       <div class="question-meta">
-        <strong>[카테고리]</strong> <span th:text="${question.category.category}">카테고리</span> |
+        <strong>[카테고리]</strong> <span th:text="${question.categoryId}">카테고리</span> |
         <strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
         <strong>[작성일]</strong> <span th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
         <strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |

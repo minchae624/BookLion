@@ -26,6 +26,10 @@ public class Category {
     @Column(nullable = false)
 	private String category;
 
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+    
 	public void setCategory(String category) {
 		this.category = category;
 	}

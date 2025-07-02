@@ -49,16 +49,12 @@ public class Questions {
 		this.viewCount++;
 	}
 	
-	
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private Users user;
 	
-	@ManyToOne
-	@JoinColumn(name="category_id")
-	private Category category;
+	private Integer categoryId;
 
-	
 	@OneToMany(mappedBy="question",cascade=CascadeType.ALL)
 	private List<Answers> answer=new ArrayList<>();
 
@@ -95,11 +91,7 @@ public class Questions {
 		this.status = status;
 	}
 
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
+	
 	public void setWritingtime(LocalDateTime writingtime) {
 		this.writingtime = writingtime;
 	}
@@ -109,6 +101,10 @@ public class Questions {
 	}
 	public void setLikeCount(int likeCount) {
 	    this.likeCount = likeCount;
+	}
+	
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
 	}
 
 

@@ -25,7 +25,7 @@
         <option th:each="cat : ${categories}"
                 th:value="${cat.categoryId}"
                 th:text="${cat.category}"
-                th:selected="${cat.categoryId == question.category.categoryId}"></option>
+                th:selected="${cat.categoryId == question.categoryId}"></option>
       </select>
 
       <label for="content">본문</label>

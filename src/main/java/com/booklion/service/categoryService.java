@@ -23,7 +23,7 @@ public class categoryService {
     }
 
     // ID로 카테고리 찾기
-    public Category getCategoryById(Long categoryId) {
+    public Category getCategoryById(Integer categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         return category.orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
     }

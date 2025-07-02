@@ -58,14 +58,11 @@ public class QuestionService {
 	public void update(Integer id, Questions updated) {
 	    Questions existing = questionRepository.findById(id).orElseThrow();
 
-	    if (updated.getCategory() != null && updated.getCategory().getCategoryId() == null) {
-	        Category savedCategory = categoryRepository.save(updated.getCategory());
-	        updated.setCategory(savedCategory); 
+	    if (updated.getCategoryId() != null) {
+	    	 existing.setCategoryId(updated.getCategoryId()); 
 	    }
-
 	    existing.setTitle(updated.getTitle());
 	    existing.setContent(updated.getContent());
-	    existing.setCategory(updated.getCategory());
 	    existing.setStatus(updated.getStatus());
 
 	    questionRepository.save(existing);
