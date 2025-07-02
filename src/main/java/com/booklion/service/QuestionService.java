@@ -37,7 +37,9 @@ public class QuestionService {
 		return questionRepository.save(question);
 	}
 
+	@Transactional
 	public void deleteQuestion(Integer id) {
+		likeRepository.deleteByQuestion_QuestId(id);
 		questionRepository.deleteById(id);
 	}
 
@@ -104,6 +106,8 @@ public class QuestionService {
 	    }
 	    return questionRepository.findAllWithCategoryAndUser(pageable);
 	}
+
+	
 
 
 
