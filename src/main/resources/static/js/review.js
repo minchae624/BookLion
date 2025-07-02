@@ -97,17 +97,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 				replyListDiv.innerHTML = ''; // 초기화
 
 				replies.forEach(reply => {
-					const replyDiv = document.createElement('div');
-					replyDiv.style = "background-color: #eee; padding: 1rem; margin-top: 1rem; border-radius: 6px;";
-					replyDiv.innerHTML = `
-	                        <p style="text-align: right; font-size: 0.9rem;">
-	                            <!-- 수정/삭제 기능은 추후 구현 -->
-	                        </p>
-	                        <p><strong>${reply.userId}</strong></p>
-	                        <p>${reply.content}</p>
-	                        <p style="text-align: right; font-size: 0.9rem;">${new Date(reply.writingtime).toLocaleString()}</p>
-	                    `;
-					replyListDiv.appendChild(replyDiv);
+				    const replyDiv = document.createElement('div');
+				    replyDiv.style = "background-color: #eee; padding: 1rem; margin-top: 1rem; border-radius: 6px;";
+				    replyDiv.innerHTML = `
+				        <p style="text-align: right; font-size: 0.9rem;">
+				            <!-- 수정/삭제 기능은 추후 구현 -->
+				        </p>
+				        <p><strong>${reply.username}</strong></p>  <!-- 여기 username으로 변경 -->
+				        <p>${reply.content}</p>
+				        <p style="text-align: right; font-size: 0.9rem;">${new Date(reply.writingtime).toLocaleString()}</p>
+				    `;
+				    replyListDiv.appendChild(replyDiv);
 				});
 			} else {
 				replyListDiv.innerHTML = '<p>댓글을 불러오는 데 실패했습니다.</p>';

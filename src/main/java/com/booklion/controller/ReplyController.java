@@ -44,6 +44,7 @@ public class ReplyController {
                 reply.getReply_id(),
                 reply.getPost().getPostId(),
                 reply.getUser().getUserId().longValue(),
+                reply.getUser().getUsername(),
                 reply.getContent(),
                 reply.getWritingtime()
             ))
