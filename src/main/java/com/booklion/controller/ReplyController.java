@@ -1,6 +1,7 @@
 package com.booklion.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class ReplyController {
                 reply.getReply_id(),
                 reply.getPost().getPostId(),
                 reply.getUser().getUserId().longValue(),
+                reply.getUser().getUsername(),
                 reply.getContent(),
                 reply.getWritingtime()
             ))
@@ -61,12 +63,16 @@ public class ReplyController {
     // 댓글 수정
     @PutMapping("/replies/{replyId}")
     public ResponseEntity<ReplyResponseDto> updateReply(@PathVariable Long replyId,
-                                                        @RequestBody String content) {
+                                                        @RequestBody Map<String, String> requestBody) {
+    	String content = requestBody.get("content");
+
         Reply updatedReply = replyService.updateReply(replyId, content);
+
         ReplyResponseDto responseDto = new ReplyResponseDto(
             updatedReply.getReply_id(),
             updatedReply.getPost().getPostId(),
             updatedReply.getUser().getUserId().longValue(),
+            updatedReply.getUser().getUsername(),
             updatedReply.getContent(),
             updatedReply.getWritingtime()
         );

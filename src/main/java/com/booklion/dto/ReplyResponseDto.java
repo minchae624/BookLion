@@ -18,8 +18,17 @@ public class ReplyResponseDto {
     
     private Long userId;
     
+    private String username;
+    
     private String content;
     
     private LocalDateTime writingtime;
     
+    public ReplyResponseDto(Long replyId, Long postId, Long userId, String content, LocalDateTime writingtime) {
+        this.replyId = replyId;
+        this.postId = postId;
+        this.userId = userId;
+        this.content = content;
+        this.writingtime = writingtime;
+    }
 }

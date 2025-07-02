@@ -111,21 +111,127 @@ document.addEventListener("DOMContentLoaded", async () => {
 			});
 			if (res.ok) {
 				const replies = await res.json();
-				replyListDiv.innerHTML = ''; // 초기화
+				replyListDiv.innerHTML = '';
 
 				replies.forEach(reply => {
 					const replyDiv = document.createElement('div');
 					replyDiv.style = "background-color: #eee; padding: 1rem; margin-top: 1rem; border-radius: 6px;";
-					replyDiv.innerHTML = `
-	                        <p style="text-align: right; font-size: 0.9rem;">
-	                            <!-- 수정/삭제 기능은 추후 구현 -->
-	                        </p>
-	                        <p><strong>${reply.userId}</strong></p>
-	                        <p>${reply.content}</p>
-	                        <p style="text-align: right; font-size: 0.9rem;">${new Date(reply.writingtime).toLocaleString()}</p>
+
+					let buttonsHtml = '';
+					// 내가 작성한 댓글이면 수정/삭제 버튼 추가
+					if (String(reply.userId) === userIdInput.value) {
+						buttonsHtml = `
+	                        <button class="btn-edit" data-id="${reply.replyId}">수정</button>
+	                        <button class="btn-delete" data-id="${reply.replyId}">삭제</button>
 	                    `;
+					}
+
+					replyDiv.innerHTML = `
+					    <p style="text-align: right; font-size: 0.9rem;">${buttonsHtml}</p>
+					    <p><strong>${reply.username}</strong></p>
+					    <p class="content">${reply.content}</p>
+					    <p style="text-align: right; font-size: 0.9rem;">${new Date(reply.writingtime).toLocaleString()}</p>
+					`;
 					replyListDiv.appendChild(replyDiv);
 				});
+
+				// 댓글 수정 버튼
+				document.querySelectorAll('.btn-edit').forEach(button => {
+					button.addEventListener('click', (e) => {
+						const replyId = e.target.dataset.id;
+						const replyDiv = e.target.closest('div');
+						const contentP = replyDiv.querySelector('p.content');
+
+						// 이미 편집 중이면 중복 실행 막기
+						if (replyDiv.querySelector('textarea')) return;
+
+						const originalContent = contentP.textContent;
+
+						const textarea = document.createElement('textarea');
+						textarea.value = originalContent;
+						textarea.style.width = '100%';
+						textarea.rows = 3;
+
+						// 수정 완료/취소 버튼 생성
+						const saveBtn = document.createElement('button');
+						saveBtn.textContent = '저장';
+						const cancelBtn = document.createElement('button');
+						cancelBtn.textContent = '취소';
+						cancelBtn.style.marginLeft = '0.5rem';
+
+						// 내용 <p>와 버튼 영역 교체
+						contentP.style.display = 'none';
+						replyDiv.appendChild(textarea);
+						replyDiv.appendChild(saveBtn);
+						replyDiv.appendChild(cancelBtn);
+
+						// 댓글 수정 저장
+						saveBtn.addEventListener('click', async () => {
+							const newContent = textarea.value.trim();
+							if (newContent === '') {
+								alert('댓글 내용을 입력하세요.');
+								return;
+							}
+
+							try {
+								const res = await fetch(`/api/replies/${replyId}`, {
+									method: 'PUT',
+									headers: {
+										"Content-Type": "application/json",
+										"Authorization": "Bearer " + token
+									},
+									body: JSON.stringify({ content: newContent })
+								});
+
+								if (res.ok) {
+									const updatedReply = await res.json();
+									alert('댓글이 수정되었습니다.');
+									loadReplies();
+								} else {
+									alert('댓글 수정에 실패했습니다.');
+								}
+							} catch (err) {
+								console.error('댓글 수정 오류:', err);
+								alert('댓글 수정 중 오류가 발생했습니다.');
+							}
+						});
+
+						// 댓글 수정 취소
+						cancelBtn.addEventListener('click', () => {
+							textarea.remove();
+							saveBtn.remove();
+							cancelBtn.remove();
+							contentP.style.display = 'block';
+						});
+					});
+				});
+
+				// 댓글 삭제 버튼
+				document.querySelectorAll('.btn-delete').forEach(button => {
+					button.addEventListener('click', async (e) => {
+						const replyId = e.target.dataset.id;
+						if (confirm("정말 댓글을 삭제하시겠습니까?")) {
+							try {
+								const res = await fetch(`/api/replies/${replyId}`, {
+									method: 'DELETE',
+									headers: {
+										"Authorization": "Bearer " + token
+									}
+								});
+								if (res.ok) {
+									alert("댓글이 삭제되었습니다.");
+									loadReplies();
+								} else {
+									alert("댓글 삭제에 실패했습니다.");
+								}
+							} catch (err) {
+								console.error("댓글 삭제 오류:", err);
+								alert("댓글 삭제 중 오류가 발생했습니다.");
+							}
+						}
+					});
+				});
+
 			} else {
 				replyListDiv.innerHTML = '<p>댓글을 불러오는 데 실패했습니다.</p>';
 			}
@@ -175,8 +281,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 				if (res.ok) {
 					alert("댓글이 등록되었습니다.");
-					commentTextarea.value = '';  // 입력란 초기화
-					loadReplies();  // 댓글 목록 새로고침
+					commentTextarea.value = '';
+					loadReplies();
 				} else {
 					const error = await res.text();
 					alert("댓글 등록 실패: " + error);
