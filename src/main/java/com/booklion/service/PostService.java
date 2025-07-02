@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final ReplyService replyService;
     /* 게시판 작성 */
     public Post create(Post post) {
         return postRepository.save(post);
@@ -67,10 +69,20 @@ public class PostService {
     }
 
     /* 게시판 삭제 */
-    public void delete(Long id) {
-        postRepository.deleteById(id);
+    public void delete(Post post) {
+        replyService.deleteByPost(post);
+        postRepository.deleteById(post.getPostId());
     }
 
+    /* 특정 회원이 작성한 게시판 일괄 삭제 (회원 삭제 시 호출 필요) */
+    public void deleteAllUsersPost(Users users) {
+        List<Post> posts = postRepository.findByUser(users);
+        System.out.println(posts.toString());
+        for (Post post : posts) {
+
+            delete(post);
+        }
+    }
     /* 좋아요 */
     public boolean likePost(Long id, Users user) {
         Post post = findById(id);

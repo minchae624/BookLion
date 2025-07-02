@@ -25,7 +25,6 @@ import java.util.Optional;
 public class PostController {
     private final PostService postService;
     private final UserRepository userRepository;
-    private final ReplyService replyService;
 
     /* 글 작성 페이지 */
     @GetMapping("/write")
@@ -50,8 +49,7 @@ public class PostController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         Post post = postService.findById(id);
-        replyService.deleteByPost(post);
-        postService.delete(id);
+        postService.delete(post);
         return ResponseEntity.ok().build();
     }
     /* 글 작성 로직 */
@@ -131,4 +129,16 @@ public class PostController {
             return ResponseEntity.badRequest().body("이미 좋아요 눌렀습니다.");
         }
     }
+
+    /* 회원 삭제 시 */
+    /* 회원 삭제 테스트용
+    @GetMapping("/deleteall/{userId}")
+    public String deleteAll(@PathVariable int userId){
+        Optional<Users> res = userRepository.findById(userId);
+        Users user = res.get();
+        postService.deleteAllUsersPost(user);
+        return "redirect:/api/posts";
+    }
+    */
+
 }
