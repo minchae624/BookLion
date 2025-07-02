@@ -65,7 +65,8 @@ public class QuestionController {
 	// 질문 목록 + 검색 + 페이징
 	@GetMapping("/qna")
 	public String showQuestionList(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(required = false) String keyword, @RequestParam(required = false) String input,
+			@RequestParam(required = false) Integer categoryId, 
+			@RequestParam(required = false) String input,
 			@SessionAttribute(name = "loginUser", required = false) Users loginUser, Model model) {
 
 		if (loginUser == null) {
@@ -73,13 +74,13 @@ public class QuestionController {
 		}
 
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-		Page<Questions> questionPage = questionService.getPageQuestions(keyword, input, pageable);
+		Page<Questions> questionPage = questionService.getPageQuestions(pageable, categoryId, input);
 
 		model.addAttribute("page", questionPage);
 		model.addAttribute("questions", questionPage.getContent());
 		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("keyword", keyword);
 		model.addAttribute("input", input);
+		model.addAttribute("categoryId",categoryId);
 
 		return "qna/qna";
 	}
@@ -87,9 +88,10 @@ public class QuestionController {
 	@GetMapping("/questions")
 	@ResponseBody
 	public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(required = false) String keyword, @RequestParam(required = false) String input) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-		return questionService.getPageQuestions(keyword, input, pageable);
+	                                    @RequestParam(required = false) String input, 
+	                                    @RequestParam(required = false) Integer categoryId) { 
+	    Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
+	    return questionService.getPageQuestions(pageable, categoryId, input);
 	}
 
 	// 질문 상세

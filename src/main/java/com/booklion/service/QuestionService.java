@@ -95,17 +95,23 @@ public class QuestionService {
 	    return true;
 	}
 
-	public List<Questions> searchByCategoryAndKeyword(Integer categoryId, String keyword) {
-	    return questionRepository.searchByCategoryAndKeyword(categoryId,keyword);
+
+	public Page<Questions> getPageQuestions(Pageable pageable, Integer categoryId, String input) {
+		 boolean hasCategory = categoryId != null;
+		    boolean hasInput = input != null && !input.trim().isEmpty();
+		    
+		    if (hasCategory && hasInput) {
+		        return questionRepository.findByCategoryIdAndInput(categoryId, input, pageable);
+		    } else if (hasCategory) {
+		        return questionRepository.findByCategoryId(pageable, categoryId);
+		    } else if (hasInput) {
+		        return questionRepository.findByInput(input, pageable);
+		    } else {
+		        return questionRepository.findAll(pageable);
+		    }
 	}
 
 
-	public Page<Questions> getPageQuestions(String keyword, String input, Pageable pageable) {
-	    if (keyword != null && input != null && !input.trim().isEmpty()) {
-	        return questionRepository.searchWithPaging(input, pageable);
-	    }
-	    return questionRepository.findAllWithCategoryAndUser(pageable);
-	}
 
 	
 

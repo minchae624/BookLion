@@ -63,7 +63,7 @@
 
 <body>
 	<header class="home-header">
-		<a href="/">
+		<a href="http://localhost:8080/api/home">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
 		</a>
 		<div class="home-user-info">
@@ -80,9 +80,10 @@
 			<h3>Q&A 목록</h3>
 			<a href="/questions/write" class="btn btn-blue">질문하기</a>
 		</div>
-		<form action="/questions" method="GET">
+
+		<form id="search-form">
 			<div class="search-container">
-				<select name="category" id="category">
+				<select name="categoryId" id="category">
 					<option value="">전체</option>
 					<option value="1">책 추천</option>
 					<option value="2">이벤트</option>
@@ -90,7 +91,6 @@
 				</select>
 
 				<input type="text" id="keyword" name="input" placeholder="제목, 작성자, 본문 내용으로 검색">
-
 				<button type="submit">검색</button>
 			</div>
 		</form>
@@ -120,11 +120,17 @@
 	</main>
 
 	<script>
+		const categoryMap = {
+		  1: "책 추천",
+		  2: "이벤트",
+		  3: "기타"
+		};
+		
 		function loadPage(page = 0) {
 			const category = document.getElementById("category").value;
 			const input = document.getElementById("keyword").value;
 
-			fetch(`/questions?page=${page}&category=${category}&input=${input}`, {
+			fetch(`/questions?page=${page}&categoryId=${category}&input=${input}`, {
 				credentials: "include"
 			})
 				.then(res => res.json())
@@ -145,7 +151,7 @@
 						const row = document.createElement("tr");
 						row.innerHTML = `
 	        <td>${idx + 1 + currentPage * 10}</td>
-	        <td>${q.categoryId || "-"}</td> 
+			<td>${categoryMap[q.categoryId] || "-"}</td>
 	        <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
 	        <td>${q.user?.username || "-"}</td>
 	        <td>${q.writingtime?.substring(0, 10) || "-"}</td>
@@ -187,6 +193,8 @@
 				});
 		}
 
+
+
 		document.addEventListener("DOMContentLoaded", () => {
 			// 사용자 이름 출력
 			fetch("/api/users/info", {
@@ -201,6 +209,10 @@
 						}
 					}
 				});
+			document.getElementById("search-form").addEventListener("submit", function (e) {
+				e.preventDefault();
+				loadPage(0);
+			});
 
 			loadPage(0);
 		});
