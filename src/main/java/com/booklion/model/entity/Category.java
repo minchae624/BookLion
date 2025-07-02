@@ -1,5 +1,7 @@
 package com.booklion.model.entity;
 
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +24,5 @@ public class Category {
 
 	public void setCategory(String category) {
 		this.category = category;
-
 	}
-
 }

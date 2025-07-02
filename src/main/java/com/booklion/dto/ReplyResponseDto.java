@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
 // 댓글, 댓글 목록 조회 응답용 Dto
 public class ReplyResponseDto {
