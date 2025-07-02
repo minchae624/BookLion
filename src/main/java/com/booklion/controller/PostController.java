@@ -131,7 +131,6 @@ public class PostController {
     }
 
     /* 회원 삭제 시 */
-    /* 회원 삭제 테스트용
     @GetMapping("/deleteall/{userId}")
     public String deleteAll(@PathVariable int userId){
         Optional<Users> res = userRepository.findById(userId);
@@ -139,6 +138,6 @@ public class PostController {
         postService.deleteAllUsersPost(user);
         return "redirect:/api/posts";
     }
-    */
+
 
 }

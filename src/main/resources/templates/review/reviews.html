@@ -10,8 +10,8 @@
 
 <body>
 	<header class="home-header">
-		<a href="/">
-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+		<a th:href="@{/api/home}">
+			<img th:src="@{/img/linklogo.png}" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
 			<span id="welcome-msg">환영합니다.</span>

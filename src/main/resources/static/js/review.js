@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			welcomeMsg.textContent = "환영합니다.";
 		}
 	} else {
+		window.location.href = "/"
 		welcomeMsg.textContent = "환영합니다.";
 	}
 	// 글 삭제 처리
@@ -76,13 +77,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 				}
 			})
 		});
-		// 로그아웃 처리
-		logoutBtn.addEventListener("click", () => {
-			localStorage.removeItem("token");
-			alert("로그아웃되었습니다.");
-			window.location.href = "/";
-		});
 	}
+	// 로그아웃 처리
+	logoutBtn.addEventListener("click", () => {
+		localStorage.removeItem("token");
+		alert("로그아웃되었습니다.");
+		window.location.href = "/";
+	});
+
 	// 마이페이지 이동
 	mypageBtn.addEventListener("click", () => {
 		if (!token) {
