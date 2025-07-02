@@ -42,7 +42,7 @@
 			<p th:text="${posts.content}"></p>
 		</div>
 		<div style="text-align: center; margin: 2rem 0;">
-			<button class="btn btn-red">좋아요</button>
+			<button id = "like-btn" class="btn btn-red">좋아요</button>
 			<p style="margin-top: 0.5rem;" th:text="${#lists.size(posts.likes)}"></p>
 		</div>
 		<p style="text-align: right; font-size: 0.9rem;" id="edit-delete-btn">

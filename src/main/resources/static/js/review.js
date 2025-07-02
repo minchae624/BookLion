@@ -2,9 +2,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const welcomeMsg = document.getElementById("welcome-msg");
 	const logoutBtn = document.getElementById("logout-btn");
 	const mypageBtn = document.getElementById("mypage-btn");
+	const likeBtn = document.getElementById("like-btn");
 
 	const token = localStorage.getItem("token");
-
+	var username = null;
 	// 사용자 정보 가져오기
 	if (token) {
 		try {
@@ -17,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 			if (res.ok) {
 				const user = await res.json();
+				username = `${user.username}`;
 				welcomeMsg.textContent = `환영합니다. ${user.username}님`;
 				const userIdInput = document.getElementById("user-id");
 				const userNameInput = document.getElementById("user-name");
@@ -42,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 	} else {
 		welcomeMsg.textContent = "환영합니다.";
 	}
-
 	// 글 삭제 처리
 	window.deletePost = function(postId) {
 		if (confirm("정말 삭제하시겠습니까?")) {
@@ -58,14 +59,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 			});
 		}
 	}
+	// 좋아요 기능 추가
+	if(likeBtn) {
+		likeBtn.addEventListener("click", () => {
+			fetch(`/api/posts/${postId}/like?username=` + username, {
+				method: 'POST'
+			}).then(res => {
+				if (res.ok) {
+					alert("좋아요 성공.")
+					window.location.reload();
+				} else {
+					res.text().then(msg => {
+						alert(msg)
+					})
 
-	// 로그아웃 처리
-	logoutBtn.addEventListener("click", () => {
-		localStorage.removeItem("token");
-		alert("로그아웃되었습니다.");
-		window.location.href = "/";
-	});
-
+				}
+			})
+		});
+		// 로그아웃 처리
+		logoutBtn.addEventListener("click", () => {
+			localStorage.removeItem("token");
+			alert("로그아웃되었습니다.");
+			window.location.href = "/";
+		});
+	}
 	// 마이페이지 이동
 	mypageBtn.addEventListener("click", () => {
 		if (!token) {

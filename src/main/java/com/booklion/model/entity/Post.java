@@ -51,6 +51,10 @@ public class Post {
         this.replyCount++;
     }
 
+    /* like 리스트에 추가 */
+    public void increaseLike(Like like) {
+        this.likes.add(like);
+    }
     public void setUser(Users user) {
         this.user = user;
     }

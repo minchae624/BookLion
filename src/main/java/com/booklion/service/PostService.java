@@ -1,7 +1,11 @@
 package com.booklion.service;
 
+import com.booklion.model.entity.Like;
 import com.booklion.model.entity.Post;
+import com.booklion.model.entity.Users;
+import com.booklion.repository.LikeRepository;
 import com.booklion.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-
+    private final LikeRepository likeRepository;
     /* 게시판 작성 */
     public Post create(Post post) {
         return postRepository.save(post);
@@ -47,8 +51,7 @@ public class PostService {
             return post.get();
         }
         else {
-            System.out.println(getClass()+": "+ getClass().getName() + "일치하는 post_id가 없음!!");
-            return null;
+            throw new EntityNotFoundException("일치하는 post가 없습니다");
         }
     }
 
@@ -66,5 +69,19 @@ public class PostService {
     /* 게시판 삭제 */
     public void delete(Long id) {
         postRepository.deleteById(id);
+    }
+
+    /* 좋아요 */
+    public boolean likePost(Long id, Users user) {
+        Post post = findById(id);
+
+        if(likeRepository.existsByUserAndPost(user,post)) {
+            return false;
+        }
+        Like like = Like.forPost(user, post);
+        likeRepository.save(like);
+        post.increaseLike(like);
+        postRepository.save(post);
+        return true;
     }
 }

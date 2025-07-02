@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+		credentials: "include",
+		body: JSON.stringify({ username, password }),
       });
 
       if (!res.ok) throw new Error("로그인 실패");

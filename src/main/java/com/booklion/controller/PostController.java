@@ -59,7 +59,7 @@ public class PostController {
     public String write(@ModelAttribute Post post, @RequestParam String username) {
 
         Users user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("유저이름을 찾을 수 없음")
+                () -> new IllegalArgumentException("유저를 찾을 수 없음")
         );
         post.setUser(user);
         postService.create(post);
@@ -114,5 +114,21 @@ public class PostController {
         postService.update(id, post);
         model.addAttribute("posts", post);
         return "review/review_detail";
+    }
+
+    /* 좋아요 */
+    @PostMapping("/{id}/like")
+    public ResponseEntity<String> like(@PathVariable Long id, @RequestParam String username){
+        Users loginuser = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("유저를 찾을 수 없음")
+        );
+
+        boolean liked = postService.likePost(id, loginuser);
+        if(liked){
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.badRequest().body("이미 좋아요 눌렀습니다.");
+        }
     }
 }
