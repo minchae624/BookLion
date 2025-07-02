@@ -70,5 +70,9 @@ public class ReplyService {
         replyRepository.deleteById(replyId);
     }
 
+    @Transactional
+    public void deleteByPost(Post post) {
+        replyRepository.deleteByPost(post);
+    }
 }
 

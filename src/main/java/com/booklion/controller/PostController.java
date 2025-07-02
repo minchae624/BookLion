@@ -5,6 +5,7 @@ import com.booklion.model.entity.Post;
 import com.booklion.model.entity.Users;
 import com.booklion.repository.UserRepository;
 import com.booklion.service.PostService;
+import com.booklion.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,8 @@ import java.util.Optional;
 public class PostController {
     private final PostService postService;
     private final UserRepository userRepository;
+    private final ReplyService replyService;
+
     /* 글 작성 페이지 */
     @GetMapping("/write")
     public String writePost(Model model) {
@@ -46,6 +49,8 @@ public class PostController {
     /* 글 삭제 로직 */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        Post post = postService.findById(id);
+        replyService.deleteByPost(post);
         postService.delete(id);
         return ResponseEntity.ok().build();
     }
