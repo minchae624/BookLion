@@ -4,21 +4,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.booklion.dto.AnswerRequestDto;
 import com.booklion.dto.AnswerResponseDto;
+import com.booklion.model.entity.AnswerStatus;
 import com.booklion.model.entity.Answers;
+import com.booklion.model.entity.QuestionStatus;
+import com.booklion.model.entity.Questions;
+import com.booklion.repository.AnswerRepository;
 import com.booklion.service.AnswerService;
+import com.booklion.service.QuestionService;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class AnswerController {
 
     private final AnswerService answerService;
+    private final AnswerRepository answerRepository;
 
     // 답변 등록
     @PostMapping("/questions/{questionId}/answers")
@@ -31,7 +38,8 @@ public class AnswerController {
                 answer.getUser().getUserId(),
                 answer.getUser().getUsername(),
                 answer.getContent(),
-                answer.getWritingtime()
+                answer.getWritingtime(),
+                answer.getIsAccepted().name()
         ));
     }
 
@@ -46,7 +54,9 @@ public class AnswerController {
                         a.getUser().getUserId(),
                         a.getUser().getUsername(),
                         a.getContent(),
-                        a.getWritingtime()))
+                        a.getWritingtime(),
+                        a.getIsAccepted()!= null ? a.getIsAccepted().name() : AnswerStatus.N.name() 
+                        		))
                 .toList();
 
         return ResponseEntity.ok(responseList);
@@ -63,7 +73,8 @@ public class AnswerController {
                 updated.getUser().getUserId(),
                 updated.getUser().getUsername(),
                 updated.getContent(),
-                updated.getWritingtime()
+                updated.getWritingtime(),
+                updated.getIsAccepted() != null ? updated.getIsAccepted().name() : AnswerStatus.N.name()
         ));
     }
 
@@ -73,4 +84,20 @@ public class AnswerController {
         answerService.deleteAnswer(answerId);
         return ResponseEntity.noContent().build();
     }
+    
+ // 답변 채택
+    @PostMapping("/answers/accept")
+    public String acceptAnswer(@RequestParam("answerId") Long answerId) {
+        answerService.acceptAnswer(answerId);  
+
+        Answers answer = answerRepository.findById(answerId)
+            .orElseThrow(() -> new IllegalArgumentException("답변이 존재하지 않습니다."));
+        Integer questionId = answer.getQuestion().getQuestId();
+
+        return "redirect:/qna_detail?id=" + questionId;
+    }
+
+
+
+
 }

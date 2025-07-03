@@ -160,11 +160,11 @@
 	        <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
 	        <td>${q.user?.username || "-"}</td>
 	        <td>${q.writingtime?.substring(0, 10) || "-"}</td>
-	        <td style="color:${q.status === "SOLVED" ? "green" : "red"}; font-weight:bold">
-	          ${q.status === "SOLVED" ? "해결" : "미해결"}
+	        <td style="color:${q.status === "solved" ? "green" : "red"}; font-weight:bold">
+	          ${q.status === "solved" ? "해결완료" : "미해결"}
 	        </td>
 	        <td>${q.viewCount}</td>
-	        <td>${q.likeCount}</td>
+	        <td>${q.likeCount ?? 0}</td>
 	      `;
 						tbody.appendChild(row);
 					});

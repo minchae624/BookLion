@@ -23,9 +23,8 @@ public class QuestionController {
 	private final QuestionService questionService;
 	private final QuestionRepository questionRepository;
 	private final CategoryRepository categoryRepository;
-	private final UserService userService;
-	private final UserRepository userRepository;
-	private final CategoryService categoryService;
+	private final AnswerService answerService;
+	private final AnswerRepository answerRepository;
 
 	// 질문 작성 폼
 	@GetMapping("/questions/write")
@@ -100,9 +99,11 @@ public class QuestionController {
 	public String showQnaDetail(@RequestParam("id") Integer id,
 			@RequestParam(value = "view", defaultValue = "true") boolean shouldIncreaseView, HttpSession session,
 			Model model) {
+		
 		Users loginUser = (Users) session.getAttribute("loginUser");
 		Questions question = questionRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
+		List<Answers> answers = answerService.getAnswersByQuestion(id);
 
 		if (shouldIncreaseView) {
 			question.recordView();
@@ -111,6 +112,8 @@ public class QuestionController {
 
 		model.addAttribute("question", question);
 		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("answers", answerRepository.findByQuestion(question));
+		
 		return "qna/qna_detail";
 	}
 

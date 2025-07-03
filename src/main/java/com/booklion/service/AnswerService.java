@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.booklion.dto.AnswerRequestDto;
+import com.booklion.model.entity.AnswerStatus;
 import com.booklion.model.entity.Answers;
+import com.booklion.model.entity.QuestionStatus;
 import com.booklion.model.entity.Questions;
 import com.booklion.model.entity.Users;
 import com.booklion.repository.AnswerRepository;
@@ -35,6 +37,7 @@ public class AnswerService {
         answer.setUser(user);
         answer.setContent(dto.getContent());
         answer.setWritingtime(LocalDateTime.now());
+        answer.setIsAccepted(AnswerStatus.N);
 
         return answerRepository.save(answer);
     }
@@ -66,4 +69,30 @@ public class AnswerService {
         }
         answerRepository.deleteById(answerId);
     }
+    
+    @Transactional
+    public void acceptAnswer(Long answerId) {
+        Answers answer = answerRepository.findById(answerId)
+            .orElseThrow(() -> new IllegalArgumentException("답변이 존재하지 않습니다."));
+
+        List<Answers> answers = answerRepository.findByQuestion(answer.getQuestion());
+        for (Answers a : answers) {
+            a.setIsAccepted(AnswerStatus.N);  
+        }
+
+        answer.setIsAccepted(AnswerStatus.Y);
+
+        Questions question = answer.getQuestion();
+        question.setStatus(QuestionStatus.solved); 
+
+        answerRepository.saveAll(answers);  
+        questionRepository.save(question);  
+    }
+
+    public Answers findById(Long answerId) {
+        return answerRepository.findById(answerId)
+            .orElseThrow(() -> new IllegalArgumentException("답변이 존재하지 않습니다."));
+    }
+
+
 }
