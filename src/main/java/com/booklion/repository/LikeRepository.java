@@ -28,6 +28,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query("SELECT l.question FROM Like l WHERE l.user = :user AND l.question IS NOT NULL")
     List<Questions> findLikedQuestionsByUser(@Param("user") Users user);
 
-
+    // 회원탈퇴 - user로 like 삭제
+    void deleteLikesByUser(Users user);
 }
 
