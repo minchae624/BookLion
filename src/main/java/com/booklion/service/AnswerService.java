@@ -72,21 +72,21 @@ public class AnswerService {
     
     @Transactional
     public void acceptAnswer(Long answerId) {
-        Answers answer = answerRepository.findById(answerId)
-            .orElseThrow(() -> new IllegalArgumentException("답변이 존재하지 않습니다."));
+        
+    	Answers answer = answerRepository.findById(answerId).orElseThrow() ;
 
         List<Answers> answers = answerRepository.findByQuestion(answer.getQuestion());
         for (Answers a : answers) {
             a.setIsAccepted(AnswerStatus.N);  
         }
-
+        answerRepository.findByQuestion(answer.getQuestion())
+        .forEach(a -> a.setIsAccepted(AnswerStatus.N));
+        
         answer.setIsAccepted(AnswerStatus.Y);
 
-        Questions question = answer.getQuestion();
-        question.setStatus(QuestionStatus.solved); 
+        questionRepository.save(answer.getQuestion());
+        answerRepository.flush();
 
-        answerRepository.saveAll(answers);  
-        questionRepository.save(question);  
     }
 
     public Answers findById(Long answerId) {

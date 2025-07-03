@@ -101,8 +101,6 @@ public class QuestionController {
 		Questions question = questionRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
 
-		List<Answers> answers = answerRepository.findByQuestion(question);
-		model.addAttribute("answers", answers);
 		
 		Map<Integer, String> categoryMap = Map.of(1, "책 추천", 2, "이벤트", 3, "기타");
 		String categoryName = categoryMap.getOrDefault(question.getCategoryId(), "알 수 없음");

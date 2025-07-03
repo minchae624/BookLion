@@ -96,7 +96,8 @@ public class AnswerController {
         Integer questionId = answer.getQuestion().getQuestId();
 
         redirectAttributes.addFlashAttribute("message", "답변이 채택되었습니다.");
-        return "redirect:/qna_detail?id=" + questionId + "&view=false";
+        return "redirect:/qna_detail?id="+ answerRepository.findById(answerId)
+        .orElseThrow().getQuestion().getQuestId();
 
     }
 
