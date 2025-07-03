@@ -1,11 +1,12 @@
 package com.booklion.controller;
 
 
+import com.booklion.dto.PostRequestDto;
+import com.booklion.dto.PostResponseDto;
 import com.booklion.model.entity.Post;
 import com.booklion.model.entity.Users;
 import com.booklion.repository.UserRepository;
 import com.booklion.service.PostService;
-import com.booklion.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -73,7 +74,7 @@ public class PostController {
                          @RequestParam(defaultValue = "10") int size){     // 기본 10개씩)
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "postId")); // id 내림차순 정렬
-        Page<Post> posts;
+        Page<PostResponseDto> posts;
         if(keyword != null && input != null && !input.isBlank()) {
             switch (keyword) {
                 case "t":   //title 검색
@@ -116,8 +117,8 @@ public class PostController {
 
     /* 좋아요 */
     @PostMapping("/{id}/like")
-    public ResponseEntity<String> like(@PathVariable Long id, @RequestParam String username){
-        Users loginuser = userRepository.findByUsername(username).orElseThrow(
+    public ResponseEntity<String> like(@PathVariable Long id, @RequestBody PostRequestDto dto){
+        Users loginuser = userRepository.findById(dto.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException("유저를 찾을 수 없음")
         );
 
@@ -138,6 +139,5 @@ public class PostController {
         postService.deleteAllUsersPost(user);
         return "redirect:/api/posts";
     }
-
 
 }

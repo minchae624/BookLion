@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const token = localStorage.getItem("token");
 	var username = null;
+	var userId = null;
+
 	// 사용자 정보 가져오기
 	if (token) {
 		try {
@@ -19,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			if (res.ok) {
 				const user = await res.json();
 				username = `${user.username}`;
+				userId = `${user.userId}`;
 				welcomeMsg.textContent = `환영합니다. ${user.username}님`;
 				const userIdInput = document.getElementById("user-id");
 				const userNameInput = document.getElementById("user-name");
@@ -35,10 +38,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 					}
 				}
 			} else {
+				window.location.href = "/"
+				console.log(username)
 				welcomeMsg.textContent = "환영합니다.";
 			}
 		} catch (err) {
 			console.error("사용자 정보 조회 실패:", err);
+			window.location.href = "/"
 			welcomeMsg.textContent = "환영합니다.";
 		}
 	} else {
@@ -63,8 +69,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 	// 좋아요 기능 추가
 	if(likeBtn) {
 		likeBtn.addEventListener("click", () => {
-			fetch(`/api/posts/${postId}/like?username=` + username, {
-				method: 'POST'
+			fetch(`/api/posts/${postId}/like`,{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					postId: postId,
+					userId: userId })
 			}).then(res => {
 				if (res.ok) {
 					alert("좋아요 성공.")

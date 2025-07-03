@@ -1,5 +1,6 @@
 package com.booklion.service;
 
+import com.booklion.dto.PostResponseDto;
 import com.booklion.model.entity.Like;
 import com.booklion.model.entity.Post;
 import com.booklion.model.entity.Users;
@@ -26,24 +27,75 @@ public class PostService {
     }
 
     /* 게시판 조회 */
-    public Page<Post> findAll(Pageable pageable) {
-        return postRepository.findAll(pageable);
+    public Page<PostResponseDto> findAll(Pageable pageable) {
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        return posts.map(post -> new PostResponseDto(
+                post.getPostId(),
+                post.getGenre(),
+                post.getTitle(),
+                post.getUser().getUsername(), // writer
+                post.getWritingtime(),
+                post.getViewCount(),
+                post.getReplyCount(),
+                post.getLikes().size()
+        ));
     }
     /* 게시판 제목 검색 */
-    public Page<Post> searchByTitle(String title, Pageable pageable) {
-        return postRepository.findByTitleContaining(title, pageable);
+    public Page<PostResponseDto> searchByTitle(String title, Pageable pageable) {
+        Page<Post> posts = postRepository.findByTitleContaining(title, pageable);
+        return posts.map(post -> new PostResponseDto(
+                post.getPostId(),
+                post.getGenre(),
+                post.getTitle(),
+                post.getUser().getUsername(), // writer
+                post.getWritingtime(),
+                post.getViewCount(),
+                post.getReplyCount(),
+                post.getLikes().size()
+        ));
     }
     /* 게시판 내용 검색 */
-    public Page<Post> searchByContent(String content, Pageable pageable) {
-        return postRepository.findByContentContaining(content, pageable);
+    public Page<PostResponseDto> searchByContent(String content, Pageable pageable) {
+        Page<Post> posts = postRepository.findByContentContaining(content, pageable);
+        return posts.map(post -> new PostResponseDto(
+                post.getPostId(),
+                post.getGenre(),
+                post.getTitle(),
+                post.getUser().getUsername(), // writer
+                post.getWritingtime(),
+                post.getViewCount(),
+                post.getReplyCount(),
+                post.getLikes().size()
+        ));
     }
     /* 책 제목 검색 */
-    public Page<Post> searchByBooktitle(String title, Pageable pageable) {
-        return postRepository.findByBooktitleContaining(title, pageable);
+    public Page<PostResponseDto> searchByBooktitle(String title, Pageable pageable) {
+        Page<Post> posts = postRepository.findByBooktitleContaining(title, pageable);
+        return posts.map(post -> new PostResponseDto(
+                post.getPostId(),
+                post.getGenre(),
+                post.getTitle(),
+                post.getUser().getUsername(), // writer
+                post.getWritingtime(),
+                post.getViewCount(),
+                post.getReplyCount(),
+                post.getLikes().size()
+        ));
     }
     /* 책 저자 검색 */
-    public Page<Post> searchByAuthor(String author, Pageable pageable) {
-        return postRepository.findByAuthorContaining(author, pageable);
+    public Page<PostResponseDto> searchByAuthor(String author, Pageable pageable) {
+        Page<Post> posts = postRepository.findByAuthorContaining(author, pageable);
+        return posts.map(post -> new PostResponseDto(
+                post.getPostId(),
+                post.getGenre(),
+                post.getTitle(),
+                post.getUser().getUsername(), // writer
+                post.getWritingtime(),
+                post.getViewCount(),
+                post.getReplyCount(),
+                post.getLikes().size()
+        ));
     }
 
     /* 상세 게시판 조회 */
