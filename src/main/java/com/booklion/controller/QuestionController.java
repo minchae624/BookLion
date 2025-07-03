@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -56,6 +57,7 @@ public class QuestionController {
 	    question.setLikeCount(0);
 
 	    questionRepository.save(question);
+	    
 
 	    return "redirect:/qna_detail?id=" + question.getQuestId(); 
 	}
@@ -90,6 +92,7 @@ public class QuestionController {
 	                                    @RequestParam(required = false) String input, 
 	                                    @RequestParam(required = false) Integer categoryId) { 
 		
+		 
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
 	    return questionService.getPageQuestions(pageable, categoryId, input);
 	}
@@ -101,8 +104,17 @@ public class QuestionController {
 			Model model) {
 		
 		Users loginUser = (Users) session.getAttribute("loginUser");
+		
 		Questions question = questionRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
+		   
+		Map<Integer, String> categoryMap = Map.of(
+			        1, "책 추천",
+			        2, "이벤트",
+			        3, "기타"
+			    );
+			    String categoryName = categoryMap.getOrDefault(question.getCategoryId(), "알 수 없음");
+		
 		List<Answers> answers = answerService.getAnswersByQuestion(id);
 
 		if (shouldIncreaseView) {
@@ -112,8 +124,8 @@ public class QuestionController {
 
 		model.addAttribute("question", question);
 		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("answers", answerRepository.findByQuestion(question));
-		
+		model.addAttribute("categoryName", categoryName); 
+		model.addAttribute("answers", answerService.getAnswersByQuestion(id));
 		return "qna/qna_detail";
 	}
 

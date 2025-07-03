@@ -13,7 +13,7 @@
 
 <body>
 	<header class="home-header">
-		<a href="http://localhost:8080/api/home">
+		 <a href="/api/home">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
@@ -35,15 +35,15 @@
 
 		<div class="question-wrapper">
 			<div class="question-meta">
-				<strong>[카테고리]</strong> <span th:text="${question.categoryId}">카테고리</span> |
+				<strong>[카테고리]</strong> <span th:text="${categoryName}">카테고리</span> |
 				<strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
 				<strong>[작성일]</strong> <span
 					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
 				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
 				<strong>[상태]</strong>
-				<span th:text="${question.status.name() == 'solved' ? '해결완료' : '미해결'}"
-				      th:style="${question.status.name() == 'solved'} ? 'color:green' : 'color:red'">
-				</span>
+				<span th:if="${question.status != null}"
+				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
+				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">미해결</span>
 
 			</div>
 
@@ -78,43 +78,55 @@
 		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
 
 
-		<!-- 답변 리스트 -->
 		<input type="hidden" id="question-id" th:value="${question.questId}" />
-		<div id="answer-list" style="margin-top: 2rem;"></div>
-
-
+	     <!-- 답변 목록 (폼 방식만 유지) -->
 		<div th:each="answer : ${answers}"
-			style="background-color:#eee; padding:1rem; border-radius:6px; margin-bottom:1rem;">
+		     style="background-color:#eee; padding:1rem; border-radius:6px; margin-bottom:1rem;">
 
-			<div style="display: flex; justify-content: space-between;">
-				<p><strong th:text="${answer.user.username}">작성자</strong></p>
+		  <div style="display: flex; justify-content: space-between;">
+		    <p><strong th:text="${answer.user.username}">작성자</strong></p>
 
-				<div>
-					<!-- 채택 여부 및 버튼 표시 -->
-					<span th:if="${answer.isAccepted != null and answer.isAccepted.name() == 'Y'}"
-						style="color:blue; font-weight:bold;">[채택됨]</span>
+		    <div>
+		      <!-- 채택 여부 표시 -->
+		      <span th:if="${answer.isAccepted != null and answer.isAccepted.name() == 'Y'}"
+		            style="color:blue; font-weight:bold;">[채택됨]</span>
 
-					<form th:if="${answer.isAccepted != null and answer.isAccepted.name() == 'N'
-		                          and loginUser != null and loginUser.username == question.user.username}"
-						th:action="@{/api/answers/accept}" method="post" style="display:inline;">
-						<input type="hidden" name="answerId" th:value="${answer.answerId}" />
-						<button type="submit" class="btn btn-primary">채택</button>
-					</form>
-				</div>
-			</div>
+		      <!-- 채택 버튼: 질문 작성자만 -->
+		      <form th:if="${answer.isAccepted != null and answer.isAccepted.name() == 'N' 
+		                    and loginUser != null and loginUser.username == question.user.username}"
+		            th:action="@{/api/answers/accept}" method="post" style="display:inline;">
+		        <input type="hidden" name="answerId" th:value="${answer.answerId}" />
+		        <button type="submit" class="btn btn-primary">채택</button>
+		      </form>
 
-			<p th:text="${answer.content}">내용</p>
-			<p style="text-align:right; font-size:0.9rem;"
-				th:text="${#temporals.format(answer.writingtime, 'yyyy-MM-dd HH:mm')}">작성일</p>
+		      <!-- 수정/삭제 버튼: 답변 작성자만 -->
+		      <form th:if="${loginUser != null and loginUser.userId == answer.user.userId}"
+		            th:action="@{/api/answers/edit}" method="get" style="display:inline;">
+		        <input type="hidden" name="id" th:value="${answer.answerId}" />
+		        <button type="submit" class="btn btn-primary">수정</button>
+		      </form>
+
+		      <form th:if="${loginUser != null and loginUser.userId == answer.user.userId}"
+		            th:action="@{/api/answers/delete}" method="post" style="display:inline;">
+		        <input type="hidden" name="id" th:value="${answer.answerId}" />
+		        <button type="submit" class="btn btn-danger">삭제</button>
+		      </form>
+		    </div>
+		  </div>
+
+		  <p th:text="${answer.content}">내용</p>
+		  <p style="text-align:right; font-size:0.9rem;" 
+		     th:text="${#temporals.format(answer.writingtime, 'yyyy-MM-dd HH:mm')}">작성일</p>
 		</div>
+		
 		<!-- 답변 작성 -->
-		<div style="margin-top: 2rem;">
-			<label for="new-answer"><strong>답변 작성</strong></label>
-			<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
-			<div style="text-align: right; margin-top: 0.5rem;">
-				<button id="btn-submit-answer" class="btn btn-blue">등록</button>
-			</div>
-		</div>
+				<div style="margin-top: 2rem;">
+					<label for="new-answer"><strong>답변 작성</strong></label>
+					<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
+					<div style="text-align: right; margin-top: 0.5rem;">
+						<button id="btn-submit-answer" class="btn btn-blue">등록</button>
+					</div>
+				</div>
 
 
 	</main>

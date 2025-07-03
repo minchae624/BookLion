@@ -15,6 +15,7 @@ const answerSubmitBtn = document.getElementById("btn-submit-answer");
 const userId = document.getElementById("user-id")?.value;
 
 //답변 목록
+/*
 async function loadAnswers() {
 	const res = await fetch(`/api/questions/${questionId}/answers`);
 	if (!res.ok) {
@@ -47,7 +48,7 @@ async function loadAnswers() {
 				}
 		
 		div.innerHTML = `
-            <p style="text-align:right;">${badge} ${buttons}</p>
+            <p style="text-align:right;">${buttons}</p>
             <p><strong>${answer.username}</strong></p>
             <p class="content">${answer.content}</p>
             <p style="text-align:right; font-size:0.9rem;">${new Date(answer.writingtime).toLocaleString()}</p>
@@ -56,7 +57,7 @@ async function loadAnswers() {
 	});
 
 	setupEditDeleteEvents();
-}
+}*/
 
 answerSubmitBtn.addEventListener("click", async () => {
 	const content = answerTextarea.value.trim();
