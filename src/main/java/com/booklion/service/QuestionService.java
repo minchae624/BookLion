@@ -110,12 +110,9 @@ public class QuestionService {
 		        return questionRepository.findAll(pageable);
 		    }
 	}
-
-
-
-	
-
-
-
+	@Transactional
+	public void deleteAllByuser(Users user) {
+		questionRepository.deleteAllByUser(user);
+	}
 
 }

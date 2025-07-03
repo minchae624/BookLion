@@ -33,4 +33,6 @@ public interface QuestionRepository extends JpaRepository<Questions, Integer> {
 	Page<Questions> findByInput(@Param("input") String input, Pageable pageable);
 
 	Page<Questions> findByCategoryId(Pageable pageable, Integer categoryId);
+
+	void deleteAllByUser(Users user);
 }

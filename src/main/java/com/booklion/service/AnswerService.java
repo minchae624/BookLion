@@ -94,5 +94,8 @@ public class AnswerService {
             .orElseThrow(() -> new IllegalArgumentException("답변이 존재하지 않습니다."));
     }
 
-
+    @Transactional
+    public void deleteAllByUser(Users user) {
+        answerRepository.deleteAllByUser(user);
+    }
 }

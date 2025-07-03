@@ -2,10 +2,7 @@ package com.booklion.controller;
 
 import com.booklion.model.entity.Users;
 import com.booklion.repository.LikeRepository;
-import com.booklion.service.LikeService;
-import com.booklion.service.PostService;
-import com.booklion.service.ReplyService;
-import com.booklion.service.UserService;
+import com.booklion.service.*;
 import com.booklion.util.JwtUtil;
 
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +25,8 @@ public class UserController {
     private final PostService postService;
     private final ReplyService replyService;
     private final LikeService likeService;
+    private final AnswerService answerService;
+    private final QuestionService questionService;
 
     // 회원가입
     @PostMapping("/signup")
@@ -119,6 +118,8 @@ public class UserController {
         Users user = userService.getUserInfoFromToken(pureToken);
         replyService.deleteAllByUser(user);
         postService.deleteAllUsersPost(user);
+        answerService.deleteAllByUser(user);
+        questionService.deleteAllByuser(user);
         likeService.deleteAllbyUser(user);
         userService.deleteUserByToken(pureToken);
         return ResponseEntity.ok("deleted");

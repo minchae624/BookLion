@@ -18,4 +18,6 @@ public interface AnswerRepository extends JpaRepository<Answers, Long>{
     void deleteByQuestion(Questions question);
     
     List<Answers> findByUser(Users user);
+
+    void deleteAllByUser(Users user);
 }

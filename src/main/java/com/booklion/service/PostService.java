@@ -129,7 +129,6 @@ public class PostService {
     /* 특정 회원이 작성한 게시판 일괄 삭제 (회원 삭제 시 호출 필요) */
     public void deleteAllUsersPost(Users users) {
         List<Post> posts = postRepository.findByUser(users);
-        System.out.println(posts.toString());
         for (Post post : posts) {
 
             delete(post);
