@@ -74,5 +74,11 @@ public class ReplyService {
     public void deleteByPost(Post post) {
         replyRepository.deleteByPost(post);
     }
+    
+    @Transactional
+    public void deleteAllByUser(Users user) {
+        replyRepository.deleteByUser(user);
+    }
+
 }
 
