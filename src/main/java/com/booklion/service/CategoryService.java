@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class categoryService {
+public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 

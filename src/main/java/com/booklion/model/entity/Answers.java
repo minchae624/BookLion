@@ -57,5 +57,9 @@ public class Answers {
 		this.isAccepted = isAccepted;
 	}
 
+	public void setWritingtime(LocalDateTime writingtime) {
+		this.writingtime = writingtime;
+	}
+
 	
 }

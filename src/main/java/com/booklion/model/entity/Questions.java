@@ -21,55 +21,64 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 
-
-
 @Entity
-@Table(name="Questions")
+@Table(name = "Questions")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Questions {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer questId;
-	
+
 	private String title;
 	private String content;
 	private LocalDateTime writingtime = LocalDateTime.now();
+	private Integer answerCount;
+
 	
 	@Enumerated(EnumType.STRING)
 	private QuestionStatus status;
-	
+
 	private Integer viewCount;
-	
+
 	public void recordView() {
-		if (viewCount==null) viewCount=0;
+		if (viewCount == null)
+			viewCount = 0;
 		this.viewCount++;
 	}
-	
+
 	@ManyToOne
-	@JoinColumn(name="user_id")
+	@JoinColumn(name = "user_id")
 	private Users user;
-	
+
 	private Integer categoryId;
 
-	@OneToMany(mappedBy="question",cascade=CascadeType.ALL)
-	private List<Answers> answer=new ArrayList<>();
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+	private List<Answers> answer = new ArrayList<>();
 
 	@Column(nullable = false)
-	private Integer likeCount = 0; 
+	private Integer likeCount = 0;
+
 	@PrePersist
 	public void prePersist() {
-	    if (this.likeCount == null) this.likeCount = 0;
+		if (this.likeCount == null)
+			this.likeCount = 0;
 	}
+
 	public void increaseLike() {
-	    if (this.likeCount == null) this.likeCount = 0;
-	    this.likeCount++;
+		if (this.likeCount == null)
+			this.likeCount = 0;
+		this.likeCount++;
 	}
 
-
+	// 댓글 수 증가
+	public void recordAnswer() {
+		if (answerCount == null) answerCount = 0;
+		this.answerCount++;
+	}
 
 	public Integer getQuestId() {
 		return questId;
@@ -91,7 +100,6 @@ public class Questions {
 		this.status = status;
 	}
 
-	
 	public void setWritingtime(LocalDateTime writingtime) {
 		this.writingtime = writingtime;
 	}
@@ -99,14 +107,13 @@ public class Questions {
 	public void setViewCount(Integer viewCount) {
 		this.viewCount = viewCount;
 	}
+
 	public void setLikeCount(int likeCount) {
-	    this.likeCount = likeCount;
+		this.likeCount = likeCount;
 	}
-	
+
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
 
-
-	
 }

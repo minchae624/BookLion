@@ -25,7 +25,7 @@ public class QuestionController {
 	private final CategoryRepository categoryRepository;
 	private final UserService userService;
 	private final UserRepository userRepository;
-	private final categoryService categoryService;
+	private final CategoryService categoryService;
 
 	// 질문 작성 폼
 	@GetMapping("/questions/write")
@@ -90,7 +90,8 @@ public class QuestionController {
 	public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
 	                                    @RequestParam(required = false) String input, 
 	                                    @RequestParam(required = false) Integer categoryId) { 
-	    Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
+		
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
 	    return questionService.getPageQuestions(pageable, categoryId, input);
 	}
 
@@ -115,15 +116,17 @@ public class QuestionController {
 
 	// 좋아요
 	@PostMapping("/questions/{id}/like")
-	public String likeQuestion(@PathVariable Integer id, @SessionAttribute("loginUser") Users loginUser,
+	public String likeQuestion(@PathVariable Integer id, 
+			@SessionAttribute("loginUser") Users loginUser,
 			RedirectAttributes redirectAttributes) {
+		
 		boolean liked = questionService.likeQuestion(id, loginUser);
 		if (liked) {
 			redirectAttributes.addFlashAttribute("message", "좋아요를 눌렀습니다.");
 		} else {
 			redirectAttributes.addFlashAttribute("message", "이미 좋아요를 누르셨습니다.");
 		}
-		return "redirect:/qna_detail?id=" + id + "&view=false";
+		return "redirect:/qna_detail?id=" + id +"&view=false";
 	}
 
 	// 수정 폼

@@ -130,9 +130,14 @@
 			const category = document.getElementById("category").value;
 			const input = document.getElementById("keyword").value;
 
-			fetch(`/questions?page=${page}&categoryId=${category}&input=${input}`, {
-				credentials: "include"
-			})
+			let url = `/questions?page=${page}&input=${encodeURIComponent(input)}`;
+				if (category !== "") {
+					url += `&categoryId=${category}`;
+				}
+
+				fetch(url, {
+					credentials: "include"
+				})
 				.then(res => res.json())
 				.then(data => {
 					const questions = data.content;
@@ -214,7 +219,7 @@
 				loadPage(0);
 			});
 
-			loadPage(0);
+				loadPage(0); 
 		});
 	</script>
 
