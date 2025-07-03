@@ -1,29 +1,34 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - 감상평 작성</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
 	<header class="home-header">
 		<a th:href="@{/api/home}">
-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+			<img th:src="@{/img/linklogo.png}" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
-			<span>환영합니다. 멋사 님</span>
+			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<a href="main.html" class="btn btn-secondary">로그아웃</a>
-				<a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
+				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
 			</div>
 		</div>
 	</header>
 	<main class="mypage-container">
 		<h3>감상평 작성</h3>
 		<form class="signup-form" th:action="@{/api/posts}" method="post">
+			<!-- 유저 정보 -->
+			<input type="hidden" name="userId" id="user-id" />
+			<input type="hidden" name="username" id="user-name" />
+
+			<!-- 게시글 정보 -->
 			<label for="post-title">글 제목</label>
 			<input type="text" id="post-title" name="title" class="input-field" required>
 			<label for="book-title">책 제목</label>
@@ -61,6 +66,7 @@
 			</div>
 		</form>
 	</main>
+	<script src="/js/review.js"></script>
 </body>
 
 </html>

@@ -1,69 +1,143 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>책 먹는 사자 - Q&A</title>
-	<link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>책 먹는 사자 - Q&A</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    table th, table td {
+      text-align: center;
+      vertical-align: middle;
+      padding: 8px;
+    }
+    .btn-blue { background-color: #007bff; color: white; }
+    .btn-secondary { background-color: #ccc; color: black; }
+  </style>
 </head>
 
 <body>
-	<header class="home-header">
-		<a href="/api/home">
-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
-		</a>>
-		<div class="home-user-info">
-			<span>환영합니다. 멋사 님</span>
-			<div class="home-nav-buttons">
-				<a href="main.html" class="btn btn-secondary">로그아웃</a>
-				<a href="mypage.html" class="btn btn-secondary">마이페이지</a>
-			</div>
-		</div>
-	</header>
-	<main class="mypage-container">
-		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-			<h3>Q&A 목록</h3>
-			<a href="qna_write.html" class="btn btn-blue">질문하기</a>
-		</div>
-		<div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-			<select class="input-field" style="flex: 1;">
-				<option value="키워드 검색">키워드 검색</option>
-				<option value="카테고리 검색">카테고리 검색</option>
-			</select>
-			<input type="text" placeholder="작성자 또는 제목 검색" class="input-field" style="flex: 2;" />
-			<button class="btn btn-secondary">검색</button>
-		</div>
-		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
-			<thead>
-				<tr style="border-bottom: 2px solid #ccc;">
-					<th>번호</th>
-					<th>카테고리</th>
-					<th>제목</th>
-					<th>작성자</th>
-					<th>작성일</th>
-					<th>상태</th>
-					<th>조회수</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr style="text-align: center;">
-					<td>1</td>
-					<td>책 추천</td>
-					<td><a href="qna_detail.html" style="text-decoration: none; color: #333;">무협 소설 추천해주세요!</a></td>
-					<td>멋사</td>
-					<td>2024-06-25</td>
-					<td style="color: green;">해결</td>
-					<td>42</td>
-				</tr>
-			</tbody>
-		</table>
-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
-			<a href="#" class="btn btn-secondary">1</a>
-			<a href="#" class="btn btn-secondary">2</a>
-			<a href="#" class="btn btn-secondary">3</a>
-		</div>
-	</main>
-</body>
+  <header class="home-header">
+    <a href="/">
+      <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+    </a>
+    <div class="home-user-info">
+      <span id="welcome-msg">환영합니다.</span>
+      <div class="home-nav-buttons">
+        <a href="/logout" class="btn btn-secondary">로그아웃</a>
+        <a href="/mypage" class="btn btn-secondary">마이페이지</a>
+      </div>
+    </div>
+  </header>
 
+  <main class="mypage-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h3>Q&A 목록</h3>
+      <a href="/questions/write" class="btn btn-blue">질문하기</a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+      <thead>
+        <tr>
+          <th>번호</th><th>카테고리</th><th>제목</th><th>작성자</th>
+          <th>작성일</th><th>상태</th><th>조회수</th><th>좋아요</th>
+        </tr>
+      </thead>
+      <tbody id="question-list">
+        <tr><td colspan="8">로딩 중...</td></tr>
+      </tbody>
+    </table>
+
+    <div id="pagination" style="text-align:center; margin-top: 1rem;"></div>
+
+	</main>
+
+  <script>
+	function loadPage(page = 0) {
+	  fetch(`/questions?page=${page}`, {
+	    credentials: "include"
+	  })
+	  .then(res => res.json())
+	  .then(data => {
+	    const questions = data.content;
+	    const currentPage = data.number;
+	    const totalPages = data.totalPages;
+
+	    const tbody = document.getElementById("question-list");
+	    tbody.innerHTML = "";
+
+	    if (questions.length === 0) {
+	      tbody.innerHTML = `<tr><td colspan="8">질문이 없습니다.</td></tr>`;
+	      return;
+	    }
+
+	    questions.forEach((q, idx) => {
+	      const row = document.createElement("tr");
+	      row.innerHTML = `
+	        <td>${idx + 1 + currentPage * 10}</td>
+	        <td>${q.category?.category || "-"}</td>
+	        <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
+	        <td>${q.user?.username || "-"}</td>
+	        <td>${q.writingtime?.substring(0, 10) || "-"}</td>
+	        <td style="color:${q.status === "SOLVED" ? "green" : "red"}; font-weight:bold">
+	          ${q.status === "SOLVED" ? "해결" : "미해결"}
+	        </td>
+	        <td>${q.viewCount}</td>
+	        <td>${q.likeCount}</td>
+	      `;
+	      tbody.appendChild(row);
+	    });
+
+	    const pagination = document.getElementById("pagination");
+	    pagination.innerHTML = "";
+
+	    if (currentPage > 0) {
+	      const prevBtn = document.createElement("button");
+	      prevBtn.textContent = "이전";
+	      prevBtn.className = "btn btn-secondary";
+	      prevBtn.addEventListener("click", () => loadPage(currentPage - 1));
+	      pagination.appendChild(prevBtn);
+	    }
+
+	    for (let i = 0; i < totalPages; i++) {
+	      const btn = document.createElement("button");
+	      btn.textContent = i + 1;
+	      btn.className = i === currentPage ? "btn btn-blue" : "btn btn-secondary";
+	      btn.addEventListener("click", () => loadPage(i));
+	      pagination.appendChild(btn);
+	    }
+
+	    if (currentPage < totalPages - 1) {
+	      const nextBtn = document.createElement("button");
+	      nextBtn.textContent = "다음";
+	      nextBtn.className = "btn btn-secondary";
+	      nextBtn.addEventListener("click", () => loadPage(currentPage + 1));
+	      pagination.appendChild(nextBtn);
+	    }
+	  });
+	}
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // 사용자 이름 출력
+      fetch("/api/users/info", {
+        credentials: "include"
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.username) {
+          const msg = document.getElementById("welcome-msg");
+          if (msg) {
+            msg.textContent = `환영합니다, ${data.username}님`;
+          }
+        }
+      });
+
+      // 첫 페이지 질문 로딩
+      loadPage(0);
+    });
+  </script>
+
+</body>
 </html>

@@ -12,11 +12,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+
 
 
 @Entity
@@ -24,11 +28,12 @@ import jakarta.persistence.CascadeType;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Questions {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer questId;
+	private Long questId;
 	
 	private String title;
 	private String content;
@@ -52,11 +57,25 @@ public class Questions {
 	@ManyToOne
 	@JoinColumn(name="category_id")
 	private Category category;
+
 	
 	@OneToMany(mappedBy="question",cascade=CascadeType.ALL)
 	private List<Answers> answer=new ArrayList<>();
 
-	public Integer getQuestId() {
+	@Column(nullable = false)
+	private Integer likeCount = 0; 
+	@PrePersist
+	public void prePersist() {
+	    if (this.likeCount == null) this.likeCount = 0;
+	}
+	public void increaseLike() {
+	    if (this.likeCount == null) this.likeCount = 0;
+	    this.likeCount++;
+	}
+
+
+
+	public Long getQuestId() {
 		return questId;
 	}
 
@@ -81,6 +100,16 @@ public class Questions {
 		this.category = category;
 	}
 
+	public void setWritingtime(LocalDateTime writingtime) {
+		this.writingtime = writingtime;
+	}
+
+	public void setViewCount(Integer viewCount) {
+		this.viewCount = viewCount;
+	}
+	public void setLikeCount(int likeCount) {
+	    this.likeCount = likeCount;
+	}
 
 	
 }
