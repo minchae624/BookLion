@@ -97,19 +97,20 @@ public class QuestionService {
 
 
 	public Page<Questions> getPageQuestions(Pageable pageable, Integer categoryId, String input) {
-		 boolean hasCategory = categoryId != null;
-		    boolean hasInput = input != null && !input.trim().isEmpty();
-		    
-		    if (hasCategory && hasInput) {
-		        return questionRepository.findByCategoryIdAndInput(categoryId, input, pageable);
-		    } else if (hasCategory) {
-		        return questionRepository.findByCategoryId(pageable, categoryId);
-		    } else if (hasInput) {
-		        return questionRepository.findByInput(input, pageable);
-		    } else {
-		        return questionRepository.findAll(pageable);
-		    }
+	    boolean hasCategory = categoryId != null;
+	    boolean hasInput = input != null && !input.trim().isBlank(); // ← 수정
+
+	    if (hasCategory && hasInput) {
+	        return questionRepository.findByCategoryIdAndInput(categoryId, "%" + input + "%", pageable);
+	    } else if (hasCategory) {
+	        return questionRepository.findByCategoryId(pageable, categoryId);
+	    } else if (hasInput) {
+	        return questionRepository.findByInput("%" + input + "%", pageable);
+	    } else {
+	        return questionRepository.findAll(pageable); // <-- 진짜 전체 조회
+	    }
 	}
+
 	@Transactional
 	public void deleteAllByuser(Users user) {
 		questionRepository.deleteAllByUser(user);

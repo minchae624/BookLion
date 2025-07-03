@@ -2,10 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	const msgDiv = document.getElementById("message");
 	if (msgDiv) {
 		const message = msgDiv.dataset.msg;
-		if (message) {
-			alert(message);
-		}
+		if (message) alert(message);
 	}
+	loadAnswers();
 });
 
 const questionId = document.getElementById("question-id").value;
@@ -13,8 +12,8 @@ const answerListDiv = document.getElementById("answer-list");
 const answerTextarea = document.getElementById("new-answer");
 const answerSubmitBtn = document.getElementById("btn-submit-answer");
 const userId = document.getElementById("user-id")?.value;
+const questionAuthorId = document.getElementById("question-author-id")?.value;
 
-//답변 목록
 async function loadAnswers() {
 	const res = await fetch(`/api/questions/${questionId}/answers`);
 	if (!res.ok) {
@@ -25,35 +24,39 @@ async function loadAnswers() {
 	const answers = await res.json();
 	answerListDiv.innerHTML = "";
 
+	const isAlreadyAccepted = answers.some(a => a.isAccepted === "Y");
+
 	answers.forEach(answer => {
 		const div = document.createElement("div");
+		div.classList.add("answer-item");
 		div.style = "background-color:#eee; padding:1rem; border-radius:6px; margin-bottom:1rem;";
 
-		let buttons = "";
+		let userButtons = "";
 		let badge = "";
 
-		
-
-		// 본인 작성 답변에만 수정/삭제 버튼
 		if (String(userId) === String(answer.userId)) {
-			buttons = `
-		              <button class="btn-edit" data-id="${answer.answerId}">수정</button>
-		              <button class="btn-delete" data-id="${answer.answerId}">삭제</button>
-		            `;
+			userButtons += `
+				<button class="btn-edit" data-id="${answer.answerId}">수정</button>
+				<button class="btn-delete" data-id="${answer.answerId}">삭제</button>
+			`;
 		}
-		// 채택 표시
-				if (answer.isAccepted === 'Y') {
-					badge = `<span style="color:blue; font-weight:bold;">[채택됨]</span>`;
-				}
-		
+
+		if (String(answer.isAccepted).toUpperCase() === "Y") {
+			badge = `<span class="badge-accepted" style="color:blue; font-weight:bold;">[채택됨]</span>`;
+		}else if (!isAlreadyAccepted && String(userId) === String(questionAuthorId)) {
+			userButtons += `<button class="btn-accept" data-id="${answer.answerId}">채택</button>`;
+		}
+
 		div.innerHTML = `
-            <p style="text-align:right;">${badge} ${buttons}</p>
-            <p><strong>${answer.username}</strong></p>
-            <p class="content">${answer.content}</p>
-            <p style="text-align:right; font-size:0.9rem;">${new Date(answer.writingtime).toLocaleString()}</p>
-          `;
+			<div style="display:flex; justify-content:space-between;">
+				<p><strong>${answer.username}</strong> ${badge}</p>
+				<div>${userButtons}</div>
+			</div>
+			<p class="content">${answer.content}</p>
+			<p style="text-align:right; font-size:0.9rem;">${new Date(answer.writingtime).toLocaleString()}</p>
+		`;
 		answerListDiv.appendChild(div);
-	});
+	}); 
 
 	setupEditDeleteEvents();
 }
@@ -80,11 +83,10 @@ answerSubmitBtn.addEventListener("click", async () => {
 function setupEditDeleteEvents() {
 	document.querySelectorAll(".btn-edit").forEach(btn => {
 		btn.addEventListener("click", async () => {
-			const id = btn.dataset.id;
-			const div = btn.closest("div");
+			const div = btn.closest(".answer-item");
 			const contentP = div.querySelector(".content");
 
-			if (div.querySelector("textarea")) return;
+			if (!contentP || div.querySelector("textarea")) return;
 
 			const textarea = document.createElement("textarea");
 			textarea.value = contentP.textContent;
@@ -102,7 +104,7 @@ function setupEditDeleteEvents() {
 
 			saveBtn.addEventListener("click", async () => {
 				const newContent = textarea.value.trim();
-				const res = await fetch(`/api/answers/${id}`, {
+				const res = await fetch(`/api/answers/${btn.dataset.id}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ content: newContent })
@@ -127,6 +129,7 @@ function setupEditDeleteEvents() {
 	document.querySelectorAll(".btn-delete").forEach(btn => {
 		btn.addEventListener("click", async () => {
 			const id = btn.dataset.id;
+
 			if (!confirm("정말 삭제하시겠습니까?")) return;
 			const res = await fetch(`/api/answers/${id}`, { method: "DELETE" });
 			if (res.ok) {
@@ -137,6 +140,24 @@ function setupEditDeleteEvents() {
 			}
 		});
 	});
-}
 
-document.addEventListener("DOMContentLoaded", loadAnswers);
+	document.querySelectorAll(".btn-accept").forEach(btn => {
+		btn.addEventListener("click", () => {
+			const answerId = btn.dataset.id;
+
+			const form = document.createElement("form");
+			form.method = "POST";
+			form.action = "/api/answers/accept";
+
+			const input = document.createElement("input");
+			input.type = "hidden";
+			input.name = "answerId";
+			input.value = answerId;
+
+			form.appendChild(input);
+			document.body.appendChild(form);
+			form.submit();  
+		});
+	});
+
+	}

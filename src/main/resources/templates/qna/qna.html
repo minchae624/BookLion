@@ -63,7 +63,7 @@
 
 <body>
 	<header class="home-header">
-		<a href="http://localhost:8080/api/home">
+		 <a href="/api/home">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
 		</a>
 		<div class="home-user-info">
@@ -121,23 +121,27 @@
 
 	<script>
 		const categoryMap = {
-		  1: "책 추천",
-		  2: "이벤트",
-		  3: "기타"
+			1: "책 추천",
+			2: "이벤트",
+			3: "기타"
 		};
-		
+
 		function loadPage(page = 0) {
 			const category = document.getElementById("category").value;
-			const input = document.getElementById("keyword").value;
+			const input = document.getElementById("keyword").value.trim();
 
-			let url = `/questions?page=${page}&input=${encodeURIComponent(input)}`;
-				if (category !== "") {
-					url += `&categoryId=${category}`;
-				}
+			let url = `/questions?page=${page}`;
+			if (input.trim() !== "") {
+			  url += `&input=${encodeURIComponent(input)}`;
+			}
+			if (category !== "") {
+			  url += `&categoryId=${category}`;
+			}
 
-				fetch(url, {
-					credentials: "include"
-				})
+
+			fetch(url, {
+				credentials: "include"
+			})
 				.then(res => res.json())
 				.then(data => {
 					const questions = data.content;
@@ -145,29 +149,26 @@
 					const totalPages = data.totalPages;
 
 					const tbody = document.getElementById("question-list");
-					tbody.innerHTML = "";
-
-					if (questions.length === 0) {
-						tbody.innerHTML = `<tr><td colspan="8">질문이 없습니다.</td></tr>`;
-						return;
-					}
-
+					let html = "";
 					questions.forEach((q, idx) => {
-						const row = document.createElement("tr");
-						row.innerHTML = `
-	        <td>${idx + 1 + currentPage * 10}</td>
-			<td>${categoryMap[q.categoryId] || "-"}</td>
-	        <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
-	        <td>${q.user?.username || "-"}</td>
-	        <td>${q.writingtime?.substring(0, 10) || "-"}</td>
-	        <td style="color:${q.status === "solved" ? "green" : "red"}; font-weight:bold">
-	          ${q.status === "solved" ? "해결완료" : "미해결"}
-	        </td>
-	        <td>${q.viewCount}</td>
-	        <td>${q.likeCount ?? 0}</td>
-	      `;
-						tbody.appendChild(row);
+					  const number = idx + 1 + (currentPage ?? 0) * 10;
+					  html += `
+					    <tr>
+					      <td>${number}</td>
+					      <td>${categoryMap[q.categoryId] || "-"}</td>
+					      <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
+					      <td>${q.user?.username || "-"}</td>
+					      <td>${q.writingtime?.substring(0, 10) || "-"}</td>
+					      <td style="color:${q.status === "solved" ? "green" : "red"}; font-weight:bold">
+					        ${q.status === "solved" ? "해결완료" : "미해결"}
+					      </td>
+					      <td>${q.viewCount}</td>
+					      <td>${q.likeCount ?? 0}</td>
+					    </tr>
+					  `;
 					});
+					tbody.innerHTML = html;
+
 
 					const pagination = document.getElementById("pagination");
 					pagination.innerHTML = "";
@@ -219,7 +220,7 @@
 				loadPage(0);
 			});
 
-				loadPage(0); 
+			loadPage(0);
 		});
 	</script>
 
