@@ -33,7 +33,7 @@ public class Questions {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer questId;
+	private Long questId;
 	
 	private String title;
 	private String content;
@@ -75,7 +75,7 @@ public class Questions {
 
 
 
-	public Integer getQuestId() {
+	public Long getQuestId() {
 		return questId;
 	}
 
@@ -110,7 +110,6 @@ public class Questions {
 	public void setLikeCount(int likeCount) {
 	    this.likeCount = likeCount;
 	}
-
 
 	
 }

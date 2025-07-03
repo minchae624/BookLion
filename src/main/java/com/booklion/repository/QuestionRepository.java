@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.booklion.model.entity.Questions;
+import com.booklion.model.entity.Users;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Questions, Integer> {
@@ -26,11 +27,8 @@ public interface QuestionRepository extends JpaRepository<Questions, Integer> {
 
 	@Query("SELECT q FROM Questions q WHERE q.title LIKE %:input% OR q.user.username LIKE %:input%")
 	Page<Questions> searchWithPaging(@Param("input") String input, Pageable pageable);
-
-
 	
 	List<Questions> findByUser_UserId(Integer userId);
 	List<Questions> findAllByOrderByQuestIdDesc();
-
 
 }
