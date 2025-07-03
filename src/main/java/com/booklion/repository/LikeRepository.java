@@ -13,6 +13,8 @@ import com.booklion.model.entity.Users;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
+	void deleteByQuestion_QuestId(Integer questId);
+	
     // Q&A용
     boolean existsByUserAndQuestion(Users user, Questions question);
     int countByQuestion(Questions question);
@@ -30,5 +32,6 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     // 회원탈퇴 - user로 like 삭제
     void deleteLikesByUser(Users user);
+
 }
 

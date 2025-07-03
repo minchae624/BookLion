@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class MyPagePostResponseDto {
 
     private String type;              // 글 종류 (독후감 / QnA)
-    private Long id;                  // postId 또는 questId
+    private Integer id;                  // postId 또는 questId
     private String title;
     private LocalDateTime date;       // 작성 시간 (정렬용으로 LocalDateTime 유지)
 
@@ -25,7 +25,7 @@ public class MyPagePostResponseDto {
     }
 
     // 정적 팩토리 메서드: DTO 생성 시 내부적으로 LocalDateTime을 유지하고 반환
-    public static MyPagePostResponseDto of(String type, Long id, String title, LocalDateTime writingTime) {
+    public static MyPagePostResponseDto of(String type, Integer id, String title, LocalDateTime writingTime) {
         return MyPagePostResponseDto.builder()
                 .type(type)
                 .id(id)

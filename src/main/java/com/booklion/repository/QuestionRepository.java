@@ -16,19 +16,21 @@ import com.booklion.model.entity.Users;
 @Repository
 public interface QuestionRepository extends JpaRepository<Questions, Integer> {
 
-	@Query("SELECT q FROM Questions q " + "WHERE q.category.category_id = :categoryId "
-			+ "AND (q.title LIKE %:keyword% OR q.content LIKE %:keyword%)")
-	List<Questions> searchByCategoryAndKeyword(@Param("categoryId") Integer categoryId,
-			@Param("keyword") String keyword);
-	
 	@Query("SELECT q FROM Questions q")
-	@EntityGraph(attributePaths = {"category", "user"}) 
 	Page<Questions> findAllWithCategoryAndUser(Pageable pageable);
 
 	@Query("SELECT q FROM Questions q WHERE q.title LIKE %:input% OR q.user.username LIKE %:input%")
 	Page<Questions> searchWithPaging(@Param("input") String input, Pageable pageable);
-	
+
 	List<Questions> findByUser_UserId(Integer userId);
+
 	List<Questions> findAllByOrderByQuestIdDesc();
 
+	@Query("SELECT q FROM Questions q WHERE q.categoryId = :categoryId AND (q.title LIKE %:input% OR q.content LIKE %:input% OR q.user.username LIKE %:input%)")
+	Page<Questions> findByCategoryIdAndInput(@Param("categoryId") Integer categoryId, @Param("input") String input, Pageable pageable);
+
+	@Query("SELECT q FROM Questions q WHERE q.title LIKE %:input% OR q.content LIKE %:input% OR q.user.username LIKE %:input%")
+	Page<Questions> findByInput(@Param("input") String input, Pageable pageable);
+
+	Page<Questions> findByCategoryId(Pageable pageable, Integer categoryId);
 }

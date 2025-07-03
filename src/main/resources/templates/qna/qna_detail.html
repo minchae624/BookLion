@@ -1,104 +1,124 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>책 먹는 사자 - Q&A 상세</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="/css/qna_detail.css" />
-  <script th:src="@{/js/frontshared.js}" defer></script>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>책 먹는 사자 - Q&A 상세</title>
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="/css/qna_detail.css" />
+	<script th:src="@{/js/frontshared.js}" defer></script>
 </head>
 
+
 <body>
-  <header class="home-header">
-    <a href="http://localhost:8080/api/home">
-      <img src="/img/linklogo.png" alt="홈으로" class="linklogo">
-    </a>
-    <div class="home-user-info">
-      <span id="welcome-msg">환영합니다.</span>
-      <div class="home-nav-buttons">
-        <a href="/logout" class="btn btn-secondary" id="logout-btn">로그아웃</a>
-        <a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
-      </div>
-    </div>
-  </header>
+	<header class="home-header">
+		<a href="http://localhost:8080/api/home">
+			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+		</a>
+		<div class="home-user-info">
+			<span id="welcome-msg">환영합니다.</span>
+			<div class="home-nav-buttons">
+				<a href="/logout" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
+			</div>
+		</div>
+	</header>
 
-  <!-- 로그인 유저 확인용 -->
-  <span id="login-username" style="display: none;"
-        th:if="${loginUser != null}"
-        th:text="${loginUser.username}"></span>
+	<!-- 로그인 유저 정보 -->
+	<span id="login-username" style="display: none;" th:if="${loginUser != null}"
+		th:text="${loginUser.username}"></span>
+	<input type="hidden" id="user-id" th:if="${loginUser != null}" th:value="${loginUser.userId}" />
 
-  <main class="review-detail-container">
-    <h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
+	<main class="review-detail-container">
+		<h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
 
-    <div class="question-wrapper">
-      <div class="question-meta">
-        <strong>[카테고리]</strong> <span th:text="${question.category.category}">카테고리</span> |
-        <strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
-        <strong>[작성일]</strong> <span th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
-        <strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
-        <strong>[상태]</strong>
-        <span th:text="${question.status == 'SOLVED' ? '해결' : '미해결'}"
-              th:style="${question.status == 'SOLVED'} ? 'color:green' : 'color:red'">미해결</span>
-      </div>
+		<div class="question-wrapper">
+			<div class="question-meta">
+				<strong>[카테고리]</strong> <span th:text="${question.categoryId}">카테고리</span> |
+				<strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
+				<strong>[작성일]</strong> <span
+					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
+				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
+				<strong>[상태]</strong>
+				<span th:text="${question.status.name() == 'solved' ? '해결완료' : '미해결'}"
+				      th:style="${question.status.name() == 'solved'} ? 'color:green' : 'color:red'">
+				</span>
 
-      <!-- 본인 글일 때만 수정/삭제 버튼 -->
-      <div class="question-actions"
-           th:if="${loginUser != null and question.user.username == loginUser.username}">
-        <a th:href="@{/questions/edit/{id}(id=${question.questId})}"
-           class="btn btn-secondary" style="margin-right: 0.5rem;">수정</a>
+			</div>
 
-        <form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
-              style="display:inline;">
-          <button type="submit" class="btn btn-secondary">삭제</button>
-        </form>
-      </div>
+			<!-- 본인 글일 때만 수정/삭제/채택 버튼 -->
+			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
 
-      <div class="question-content">
-        <pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
-      </div>
-    </div>
+				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
+					style="margin-right: 0.5rem;">수정</a>
 
-    <!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
-	<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post"
-	      th:if="${loginUser != null}" 
-	      style="text-align: center; margin-top: 2rem;">
-	  <button type="submit" class="btn btn-blue">좋아요</button>
-	</form>
+				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
+					style="display:inline;">
+					<button type="submit" class="btn btn-secondary">삭제</button>
+				</form>
+			</div>
 
-	<p style="text-align: center; margin-top: 0.5rem;">
-	  <span th:text="${question.likeCount}">0</span>
-	</p>
+			<div class="question-content">
+				<pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
+			</div>
+		</div>
 
-	<!-- 좋아요 메시지 JS alert 처리 -->
-	<div id="message" th:if="${message}" th:data-msg="${message}"></div>
+		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
+		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
+			style="text-align: center; margin-top: 2rem;">
+			<button type="submit" class="btn btn-blue">좋아요</button>
+		</form>
 
-	<script>
-	  document.addEventListener("DOMContentLoaded", () => {
-	    const msgDiv = document.getElementById("message");
-	    if (msgDiv) {
-	      const message = msgDiv.dataset.msg;
-	      if (message) {
-	        alert(message); // 팝업 표시
-	      }
-	    }
-	  });
-	</script>
+		<p style="text-align: center; margin-top: 0.5rem;">
+			<span th:text="${question.likeCount}">0</span>
+		</p>
 
-    <!-- 댓글 작성 영역 -->
-    <div class="comment-section">
-      <label for="new-comment"><strong>댓글 작성</strong></label>
-      <textarea id="new-comment" rows="5" class="input-field" placeholder="댓글을 입력하세요."></textarea>
-      <div style="text-align: right; margin-top: 0.5rem;">
-        <button class="btn-blue">등록</button>
-      </div>
-    </div>
-  </main>
-  
-  <!-- 좋아요 후 메시지 alert -->
-  		 <script th:if="${message != null}">
-  		   alert([[${message}]]);
-  		 </script>
-		
+		<!-- 좋아요 메시지 JS alert 처리 -->
+		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
+
+
+		<!-- 답변 리스트 -->
+		<input type="hidden" id="question-id" th:value="${question.questId}" />
+		<div id="answer-list" style="margin-top: 2rem;"></div>
+
+
+		<div th:each="answer : ${answers}"
+			style="background-color:#eee; padding:1rem; border-radius:6px; margin-bottom:1rem;">
+
+			<div style="display: flex; justify-content: space-between;">
+				<p><strong th:text="${answer.user.username}">작성자</strong></p>
+
+				<div>
+					<!-- 채택 여부 및 버튼 표시 -->
+					<span th:if="${answer.isAccepted != null and answer.isAccepted.name() == 'Y'}"
+						style="color:blue; font-weight:bold;">[채택됨]</span>
+
+					<form th:if="${answer.isAccepted != null and answer.isAccepted.name() == 'N'
+		                          and loginUser != null and loginUser.username == question.user.username}"
+						th:action="@{/api/answers/accept}" method="post" style="display:inline;">
+						<input type="hidden" name="answerId" th:value="${answer.answerId}" />
+						<button type="submit" class="btn btn-primary">채택</button>
+					</form>
+				</div>
+			</div>
+
+			<p th:text="${answer.content}">내용</p>
+			<p style="text-align:right; font-size:0.9rem;"
+				th:text="${#temporals.format(answer.writingtime, 'yyyy-MM-dd HH:mm')}">작성일</p>
+		</div>
+		<!-- 답변 작성 -->
+		<div style="margin-top: 2rem;">
+			<label for="new-answer"><strong>답변 작성</strong></label>
+			<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
+			<div style="text-align: right; margin-top: 0.5rem;">
+				<button id="btn-submit-answer" class="btn btn-blue">등록</button>
+			</div>
+		</div>
+
+
+	</main>
+	<script src="/js/qna_detail.js"></script>
 </body>
+
 </html>
