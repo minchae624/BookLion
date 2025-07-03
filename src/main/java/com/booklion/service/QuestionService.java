@@ -2,15 +2,15 @@ package com.booklion.service;
 
 import java.util.List;
 
+import com.booklion.dto.QuestionsResponseDto;
+import com.booklion.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.booklion.model.entity.Like;
-import com.booklion.model.entity.Questions;
-import com.booklion.model.entity.Users;
+import com.booklion.repository.CategoryRepository;
 import com.booklion.repository.LikeRepository;
 import com.booklion.repository.QuestionRepository;
 
@@ -24,7 +24,9 @@ public class QuestionService {
 
 	private final QuestionRepository questionRepository;
 	private final LikeRepository likeRepository;
-	
+	private final CategoryRepository categoryRepository;
+	private final CategoryService categoryService;
+
 	public List<Questions> getAllQuestions() {
 		return questionRepository.findAllByOrderByQuestIdDesc();
 	}
@@ -34,7 +36,9 @@ public class QuestionService {
 		return questionRepository.save(question);
 	}
 
+	@Transactional
 	public void deleteQuestion(Integer id) {
+		likeRepository.deleteByQuestion_QuestId(id);
 		questionRepository.deleteById(id);
 	}
 
@@ -54,12 +58,18 @@ public class QuestionService {
 	
 	public void update(Integer id, Questions updated) {
 	    Questions existing = questionRepository.findById(id).orElseThrow();
+
+	    if (updated.getCategoryId() != null) {
+	    	 existing.setCategoryId(updated.getCategoryId()); 
+	    }
 	    existing.setTitle(updated.getTitle());
 	    existing.setContent(updated.getContent());
-	    existing.setCategory(updated.getCategory());
 	    existing.setStatus(updated.getStatus());
+
 	    questionRepository.save(existing);
 	}
+
+
 
 	public void delete(Integer id) {
 	    questionRepository.deleteById(id);
@@ -84,21 +94,56 @@ public class QuestionService {
 	    return true;
 	}
 
-	public List<Questions> searchByCategoryAndKeyword(Integer categoryId, String keyword) {
-		if (categoryId == null || keyword == null || keyword.trim().isEmpty()) {
-            throw new IllegalArgumentException("카테고리와 키워드는 필수입니다.");
-        }
 
-	    return questionRepository.searchByCategoryAndKeyword(categoryId, keyword);	}
+	public Page<Questions> getPageQuestions(Pageable pageable, Integer categoryId, String input) {
+	    boolean hasCategory = categoryId != null;
+	    boolean hasInput = input != null && !input.trim().isBlank(); // ← 수정
 
-	public Page<Questions> getPageQuestions(String keyword, String input, Pageable pageable) {
-	    if (keyword != null && input != null && !input.trim().isEmpty()) {
-	        return questionRepository.searchWithPaging(input, pageable);
+	    if (hasCategory && hasInput) {
+	        return questionRepository.findByCategoryIdAndInput(categoryId, "%" + input + "%", pageable);
+	    } else if (hasCategory) {
+	        return questionRepository.findByCategoryId(pageable, categoryId);
+	    } else if (hasInput) {
+	        return questionRepository.findByInput("%" + input + "%", pageable);
+	    } else {
+	        return questionRepository.findAll(pageable); // <-- 진짜 전체 조회
 	    }
-	    return questionRepository.findAllWithCategoryAndUser(pageable);
 	}
 
+	/* 안형준 페이징 추가 */
+	public Page<QuestionsResponseDto> search(Pageable pageable, Integer categoryId, String input) {
+		Page<Questions> questions;
 
+		// 검색어가 null일 경우 빈 문자열로 처리 (NPE 방지)
+		if (input == null) input = "";
 
+		if (categoryId != null && categoryId > 0) {
+			// 카테고리 ID가 있을 경우
+			Category category = categoryService.getCategoryById(categoryId);
+			questions = questionRepository.findByCategoryIdAndTitleContaining(categoryId, input, pageable);
+
+		} else {
+			// 카테고리 ID가 없을 경우 제목만 검색
+			questions = questionRepository.findByTitleContaining(input, pageable);
+
+		}
+		return questions.map(quest -> new QuestionsResponseDto(
+
+				quest.getQuestId(),
+				quest.getCategoryId(),
+				quest.getTitle(),
+				quest.getUser().getUsername(),
+				quest.getWritingtime(),
+				quest.getStatus() == QuestionStatus.solved,
+				quest.getViewCount(),
+				quest.getLikeCount()
+		));
+
+	}
+
+	@Transactional
+	public void deleteAllByuser(Users user) {
+		questionRepository.deleteAllByUser(user);
+	}
 
 }

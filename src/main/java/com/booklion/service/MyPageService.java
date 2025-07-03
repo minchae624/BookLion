@@ -15,12 +15,12 @@ import com.booklion.model.entity.Post;
 import com.booklion.model.entity.Questions;
 import com.booklion.model.entity.Reply;
 import com.booklion.model.entity.Users;
+import com.booklion.repository.AnswerRepository;
 import com.booklion.repository.LikeRepository;
 import com.booklion.repository.PostRepository;
 import com.booklion.repository.QuestionRepository;
 import com.booklion.repository.ReplyRepository;
 import com.booklion.repository.UserRepository;
-import com.booklion.repository.AnswerRepositoty;
 import com.booklion.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class MyPageService {
     private final UserRepository userRepository;
     private final ReplyRepository replyRepository;
     private final LikeRepository likeRepository;
-    private final AnswerRepositoty answerRepositoty;
+    private final AnswerRepository answerRepositoty;
     private final JwtUtil jwtUtil;
 
     /**
@@ -140,7 +140,7 @@ public class MyPageService {
         return posts.stream()
                 .map(post -> MyPagePostResponseDto.of(
                         type,
-                        post.getPostId(),
+                        post.getPostId().intValue(),
                         post.getTitle(),
                         post.getWritingtime()
                 ))

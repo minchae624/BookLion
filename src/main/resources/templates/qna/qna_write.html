@@ -24,9 +24,9 @@
 
   <main class="mypage-container">
     <h3>질문 작성</h3>
-    <form class="signup-form" id="question-form">
+    <form class="signup-form" id="question-form" method="POST" action="/questions/write">
       <label for="category">카테고리</label>
-      <select id="category" name="category" class="input-field" required>
+      <select id="category" name="categoryId" class="input-field" required>
         <option value="">선택</option>
         <option value="1">책 추천</option>
         <option value="2">이벤트</option>
@@ -41,7 +41,7 @@
 
       <div class="signup-button-group">
         <button type="submit" class="btn btn-green">등록</button>
-        <a href="qna.html" class="btn btn-red">취소</a>
+        <a href="/qna" class="btn btn-red">취소</a>
       </div>
     </form>
   </main>
@@ -66,33 +66,6 @@
       document.getElementById("logout-btn").addEventListener("click", () => {
         localStorage.removeItem("token");
         window.location.href = "main.html";
-      });
-
-      document.getElementById("question-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const title = document.getElementById("title").value;
-        const content = document.getElementById("content").value;
-        const categoryId = document.getElementById("category").value;
-
-        try {
-          const res = await fetch("/questions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ title, content, categoryId })
-          });
-
-          if (!res.ok) throw new Error("질문 등록 실패");
-
-          const data = await res.json(); 
-          alert("질문이 등록되었습니다.");
-          window.location.href = `/qna_detail?id=${data.id}`;
-        } catch (err) {
-          alert("에러 발생: " + err.message);
-        }
       });
     });
   </script>

@@ -2,7 +2,7 @@ package com.booklion.model.entity;
 
 import java.time.LocalDateTime;
 
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,8 +31,16 @@ public class Answers {
 	
 	 private LocalDateTime writingtime = LocalDateTime.now();
 	
-	@Enumerated(EnumType.STRING)
-	private AnswerStatus isAccepted;
+	 @Enumerated(EnumType.STRING)
+	 @Column(name = "is_accepted")
+	 private AnswerStatus isAccepted;
+	 @PrePersist
+	 public void prePersist() {
+	     if (this.isAccepted == null) {
+	         this.isAccepted = AnswerStatus.N;
+	     }
+	 }
+
 	
 	@ManyToOne
 	@JoinColumn(name="user_id")
@@ -55,6 +64,10 @@ public class Answers {
 
 	public void setIsAccepted(AnswerStatus isAccepted) {
 		this.isAccepted = isAccepted;
+	}
+
+	public void setWritingtime(LocalDateTime writingtime) {
+		this.writingtime = writingtime;
 	}
 
 	

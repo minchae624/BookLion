@@ -1,5 +1,6 @@
 package com.booklion.controller;
 
+import com.booklion.dto.QuestionsResponseDto;
 import com.booklion.model.entity.*;
 import com.booklion.repository.*;
 import com.booklion.service.*;
@@ -7,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,127 +16,188 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class QuestionController {
 
-    private final QuestionService questionService;
-    private final QuestionRepository questionRepository;
-    private final CategoryRepository categoryRepository;
-    private final UserService userService;
-    private final UserRepository userRepository;
+	private final QuestionService questionService;
+	private final QuestionRepository questionRepository;
+	private final CategoryRepository categoryRepository;
+	private final AnswerService answerService;
+	private final AnswerRepository answerRepository;
 
-    // 질문 작성 폼
-    @GetMapping("/questions/write")
-    public String showWriteForm(Model model) {
-        model.addAttribute("question", new Questions());
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "qna/qna_write";
-    }
+	// 질문 작성 폼
+	@GetMapping("/questions/write")
+	public String showWriteForm(Model model) {
+		model.addAttribute("question", new Questions());
+		model.addAttribute("categories", categoryRepository.findAll());
+		return "qna/qna_write";
+	}
 
-    // 질문 작성 처리
-    @PostMapping("/questions/write")
-    public String createQuestion(@ModelAttribute Questions question,
-                                 @SessionAttribute("loginUser") Users loginUser) {
-        question.setUser(loginUser);
-        question.setWritingtime(LocalDateTime.now());
-        question.setStatus(QuestionStatus.unsolved);
-        question.setViewCount(0);
-        question.setLikeCount(0);
-        Questions saved = questionRepository.save(question);
-        return "redirect:/qna_detail?id=" + saved.getQuestId();
-    }
+	// 질문 작성 처리
+	@PostMapping("/questions/write")
+	public String createQuestion(@RequestParam String title,
+	                             @RequestParam String content,
+	                             @RequestParam Integer categoryId,
+	                             @SessionAttribute("loginUser") Users loginUser) {
+	    
+	    // Category를 categoryId로 찾기
+	    Category category = categoryRepository.findById(categoryId)
+	            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카테고리입니다."));
 
-    // 질문 목록 + 검색 + 페이징
-    @GetMapping("/qna")
-    public String showQuestionList(@RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(required = false) String keyword,
-                                   @RequestParam(required = false) String input,
-                                   @SessionAttribute(name = "loginUser", required = false) Users loginUser,
-                                   Model model) {
+	    Questions question = new Questions();
+	    question.setTitle(title);
+	    question.setContent(content);
+	    question.setCategoryId(categoryId); 
+	    question.setUser(loginUser);
+	    question.setWritingtime(LocalDateTime.now());
+	    question.setStatus(QuestionStatus.unsolved);
+	    question.setViewCount(0);
+	    question.setLikeCount(0);
 
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+	    questionRepository.save(question);
+	    
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-        Page<Questions> questionPage = questionService.getPageQuestions(keyword, input, pageable);
+	    return "redirect:/qna_detail?id=" + question.getQuestId(); 
+	}
 
-        model.addAttribute("page", questionPage); // 페이징 전체 정보
-        model.addAttribute("questions", questionPage.getContent()); // 현재 페이지 질문 리스트
-        model.addAttribute("loginUser", loginUser);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("input", input);
+/*
+	// 질문 목록 + 검색 + 페이징
+	@GetMapping("/qna")
+	public String showQuestionList(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) Integer categoryId, 
+			@RequestParam(required = false) String input,
+			@SessionAttribute(name = "loginUser", required = false) Users loginUser, Model model) {
 
-        return "qna/qna"; // 템플릿 경로
-    }
-    
-    @GetMapping("/questions")
-    @ResponseBody
-    public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(required = false) String keyword,
-                                        @RequestParam(required = false) String input) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-        return questionService.getPageQuestions(keyword, input, pageable);
-    }
+		if (loginUser == null) {
+			return "redirect:/login";
+		}
+
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
+		Page<Questions> questionPage = questionService.getPageQuestions(pageable, categoryId, input);
+
+		model.addAttribute("page", questionPage);
+		model.addAttribute("questions", questionPage.getContent());
+		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("input", input);
+		model.addAttribute("categoryId",categoryId);
+
+		return "qna/qna";
+	}
+
+ */
+	/* 질문 목록 페이징 */
+	@GetMapping("/qna")
+	public String getQuest(Model model,
+											   @RequestParam(defaultValue = "0") int page,
+											   @RequestParam(defaultValue = "10") int size,
+											   @RequestParam(required = false) Integer categoryId,
+											   @RequestParam(required = false) String input){
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "questId")); // id 내림차순 정렬
+		Page<QuestionsResponseDto> dto = questionService.search(pageable, categoryId, input);
+		model.addAttribute("dto", dto.getContent());
+		model.addAttribute("page", dto);                // 페이지 정보
+		model.addAttribute("input", input);                 // 검색어 유지
+		model.addAttribute("categoryId", categoryId);
+		return "qna/qna";
+	}
+	@GetMapping("/questions")
+	@ResponseBody
+	public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
+	                                    @RequestParam(required = false) String input, 
+	                                    @RequestParam(required = false) Integer categoryId) { 
+		
+		 
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
+	    return questionService.getPageQuestions(pageable, categoryId, input);
+	}
+
+	// 질문 상세
+	@GetMapping("/qna_detail")
+	public String showQnaDetail(@RequestParam("id") Integer id,
+			@RequestParam(value = "view", defaultValue = "true") boolean shouldIncreaseView, HttpSession session,
+			Model model) {
+		
+		Users loginUser = (Users) session.getAttribute("loginUser");
+		
+		Questions question = questionRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
+		   
+		Map<Integer, String> categoryMap = Map.of(
+			        1, "책 추천",
+			        2, "이벤트",
+			        3, "기타"
+			    );
+			    String categoryName = categoryMap.getOrDefault(question.getCategoryId(), "알 수 없음");
+		
+		List<Answers> answers = answerService.getAnswersByQuestion(id);
+
+		if (shouldIncreaseView) {
+			question.recordView();
+			questionRepository.save(question);
+		}
+
+		model.addAttribute("question", question);
+		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("categoryName", categoryName); 
+		model.addAttribute("answers", answerService.getAnswersByQuestion(id));
+		return "qna/qna_detail";
+	}
+
+	// 좋아요
+	@PostMapping("/questions/{id}/like")
+	public String likeQuestion(@PathVariable Integer id, 
+			@SessionAttribute("loginUser") Users loginUser,
+			RedirectAttributes redirectAttributes) {
+		
+		boolean liked = questionService.likeQuestion(id, loginUser);
+		if (liked) {
+			redirectAttributes.addFlashAttribute("message", "좋아요를 눌렀습니다.");
+		} else {
+			redirectAttributes.addFlashAttribute("message", "이미 좋아요를 누르셨습니다.");
+		}
+		return "redirect:/qna_detail?id=" + id +"&view=false";
+	}
+
+	// 수정 폼
+	@GetMapping("/questions/edit/{id}")
+	public String showEditForm(@PathVariable Integer id, Model model) {
+		Questions question = questionService.findById(id);
+		model.addAttribute("question", question);
+		model.addAttribute("categories", categoryRepository.findAll());
+		return "qna/qna_edit";
+	}
+
+	// 수정 처리
+	@PostMapping("/questions/edit/{id}")
+	public String updateQuestion(@PathVariable Integer id, 
+	                             @RequestParam String title,
+	                             @RequestParam Integer categoryId, 
+	                             @RequestParam String content,
+	                             @SessionAttribute("loginUser") Users loginUser) {
+	    Category category = categoryRepository.findById(categoryId)
+	            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카테고리입니다."));
+
+	    Questions question = questionRepository.findById(id)
+	            .orElseThrow(() -> new IllegalArgumentException("질문을 찾을 수 없습니다."));
+
+	    question.setTitle(title);
+	    question.setContent(content);
+	    question.setCategoryId(categoryId); 
+	    question.setUser(loginUser);
+
+	    questionRepository.save(question);
+	    
+	    return "redirect:/qna_detail?id=" + id;
+	}
 
 
-
-    // 질문 상세
-    @GetMapping("/qna_detail")
-    public String showQnaDetail(@RequestParam("id") Integer id,
-                                @RequestParam(value = "view", defaultValue = "true") boolean shouldIncreaseView,
-                                HttpSession session,
-                                Model model) {
-        Users loginUser = (Users) session.getAttribute("loginUser");
-        Questions question = questionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
-
-        if (shouldIncreaseView) {
-            question.recordView();
-            questionRepository.save(question);
-        }
-
-        model.addAttribute("question", question);
-        model.addAttribute("loginUser", loginUser);
-        return "qna/qna_detail";
-    }
-
-    // 좋아요
-    @PostMapping("/questions/{id}/like")
-    public String likeQuestion(@PathVariable Integer id,
-                               @SessionAttribute("loginUser") Users loginUser,
-                               RedirectAttributes redirectAttributes) {
-        boolean liked = questionService.likeQuestion(id, loginUser);
-        if (liked) {
-            redirectAttributes.addFlashAttribute("message", "좋아요를 눌렀습니다.");
-        } else {
-            redirectAttributes.addFlashAttribute("message", "이미 좋아요를 누르셨습니다.");
-        }
-        return "redirect:/qna_detail?id=" + id + "&view=false";
-    }
-
-    // 수정 폼
-    @GetMapping("/questions/edit/{id}")
-    public String showEditForm(@PathVariable Integer id, Model model) {
-        Questions question = questionService.findById(id);
-        model.addAttribute("question", question);
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "qna/qna_edit";
-    }
-
-    // 수정 처리
-    @PostMapping("/questions/edit/{id}")
-    public String updateQuestion(@PathVariable Integer id, @ModelAttribute Questions updated) {
-        questionService.update(id, updated);
-        return "redirect:/qna_detail?id=" + id;
-    }
-
-    // 삭제
-    @PostMapping("/questions/delete/{id}")
-    public String deleteQuestion(@PathVariable Integer id) {
-        questionService.deleteQuestion(id);
-        return "redirect:/qna";
-    }
+	// 삭제
+	@PostMapping("/questions/delete/{id}")
+	public String deleteQuestion(@PathVariable Integer id) {
+		questionService.deleteQuestion(id);
+		return "redirect:/qna";
+	}
 }
