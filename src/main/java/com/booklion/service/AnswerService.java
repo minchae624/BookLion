@@ -84,8 +84,9 @@ public class AnswerService {
         
         answer.setIsAccepted(AnswerStatus.Y);
 
+        Questions question = answer.getQuestion();
+        question.setStatus(QuestionStatus.solved);
         questionRepository.save(answer.getQuestion());
-        answerRepository.flush();
 
     }
 
