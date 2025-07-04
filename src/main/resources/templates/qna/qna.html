@@ -122,10 +122,11 @@
 		</table>
 
 		<!-- 페이징 영역 -->
-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+		<div th:if="${page.totalPages > 0}"
+		             style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">>
 			<!-- 이전 버튼 -->
 			<span th:if="${page.hasPrevious()}">
-		<a th:href="@{/api/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
+		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
 	</span>
 
 			<!-- 페이지 번호 -->
@@ -138,11 +139,18 @@
 
 			<!-- 다음 버튼 -->
 			<span th:if="${page.hasNext()}">
-		<a th:href="@{/api/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
+		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
 	</span>
+	
 		</div>
+		
+		<!-- 게시글 없을 때 안내 문구 -->
+		<p th:if="${page.totalElements == 0}" style="text-align: center; margin-top: 2rem;">
+		    등록된 질문이 없습니다.
+		</p>
 
 	</main>
+	
 
 <script src="/js/qna.js"></script>
 
