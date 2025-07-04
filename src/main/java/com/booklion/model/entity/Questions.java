@@ -115,4 +115,5 @@ public class Questions {
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
+
 }

@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - Q&A</title>
-	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
 	<script th:src="@{/js/frontshared.js}" defer></script>
 	<style>
 		table th,
@@ -27,7 +27,6 @@
 
 		body {
 			font-family: Arial, sans-serif;
-			margin: 20px;
 		}
 
 		.search-container {
@@ -64,7 +63,7 @@
 
 <body>
 	<header class="home-header">
-		 <a href="/api/home">
+		 <a th:href="@{/api/home}">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
 		</a>
 		<div class="home-user-info">

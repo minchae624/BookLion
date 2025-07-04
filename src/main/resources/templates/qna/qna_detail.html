@@ -5,14 +5,14 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - Q&A 상세</title>
-	<link rel="stylesheet" href="/css/style.css" />
-	<link rel="stylesheet" href="/css/qna_detail.css" />
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" th:href="@{/css/qna_detail.css}" />
 	<script th:src="@{/js/frontshared.js}" defer></script>
 </head>
 
 <body>
 	<header class="home-header">
-		<a href="/api/home">
+		<a th:href="@{/api/home}">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
