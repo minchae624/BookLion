@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - Q&A</title>
 	<link rel="stylesheet" href="/css/style.css" />
+	<script th:src="@{/js/frontshared.js}" defer></script>
 	<style>
 		table th,
 		table td {
@@ -69,8 +70,8 @@
 		<div class="home-user-info">
 			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<a href="/logout" class="btn btn-secondary">로그아웃</a>
-				<a href="/mypage" class="btn btn-secondary">마이페이지</a>
+				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
 			</div>
 		</div>
 	</header>
