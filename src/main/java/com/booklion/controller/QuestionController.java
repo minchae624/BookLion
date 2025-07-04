@@ -89,7 +89,7 @@ public class QuestionController {
 
  */
 	/* 질문 목록 페이징 */
-	@GetMapping("/qna")
+	@GetMapping("/api/qna")
 	public String getQuest(Model model,
 											   @RequestParam(defaultValue = "0") int page,
 											   @RequestParam(defaultValue = "10") int size,
@@ -198,6 +198,6 @@ public class QuestionController {
 	@PostMapping("/questions/delete/{id}")
 	public String deleteQuestion(@PathVariable Integer id) {
 		questionService.deleteQuestion(id);
-		return "redirect:/qna";
+		return "redirect:/api/qna";
 	}
 }
