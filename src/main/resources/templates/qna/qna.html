@@ -6,7 +6,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - Q&A</title>
 	<link rel="stylesheet" th:href="@{/css/style.css}" />
-	<script th:src="@{/js/frontshared.js}" defer></script>
 	<style>
 		table th,
 		table td {
@@ -69,8 +68,8 @@
 		<div class="home-user-info">
 			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
-				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
+				<a th:href="@{/logout}" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+				<a th:href="@{/mypage}" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
 			</div>
 		</div>
 	</header>
@@ -115,7 +114,7 @@
 					<td th:text="${question.title}"></td>
 					<td th:text="${question.writer}"></td>
 					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
-					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
+					<td th:text="${question.status} ? 해결 : 미해결"></td>
 					<td th:text="${question.viewCount}"></td>
 					<td th:text="${question.likeCount}"></td>
 				</tr>
@@ -123,10 +122,11 @@
 		</table>
 
 		<!-- 페이징 영역 -->
-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+		<div th:if="${page.totalPages > 0}"
+		             style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">>
 			<!-- 이전 버튼 -->
 			<span th:if="${page.hasPrevious()}">
-		<a th:href="@{/api/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
+		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
 	</span>
 
 			<!-- 페이지 번호 -->
@@ -139,14 +139,20 @@
 
 			<!-- 다음 버튼 -->
 			<span th:if="${page.hasNext()}">
-		<a th:href="@{/api/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
+		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
 	</span>
+	
 		</div>
+		
+		<!-- 게시글 없을 때 안내 문구 -->
+		<p th:if="${page.totalElements == 0}" style="text-align: center; margin-top: 2rem;">
+		    등록된 질문이 없습니다.
+		</p>
 
 	</main>
+	
 
 <script src="/js/qna.js"></script>
 
 </body>
-
 </html>

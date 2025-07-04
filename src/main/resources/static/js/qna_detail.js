@@ -72,6 +72,28 @@ async function loadAnswers() {
 	setupEditDeleteEvents();
 }
 
+
+window.deleteQuestion = function (questionId) {
+	if (confirm("정말 삭제하시겠습니까?")) {
+		fetch(`/questions/delete/${questionId}`, {
+			method: 'POST'
+		})
+			.then(res => {
+				if (res.redirected) {
+					alert("삭제되었습니다.");
+					window.location.href = res.url;
+				} else {
+					alert("삭제 실패!");
+				}
+			})
+			.catch(err => {
+				console.error("삭제 오류:", err);
+				alert("삭제 중 오류가 발생했습니다.");
+			});
+	}
+}
+
+
 answerSubmitBtn.addEventListener("click", async () => {
 	const content = answerTextarea.value.trim();
 	if (!content) return alert("답변을 입력해주세요.");
@@ -167,7 +189,6 @@ function setupEditDeleteEvents() {
 	        });
 
 	        if (res.ok) {
-	            // 1. 즉시 UI 업데이트 (사용자 경험 향상)
 	            btn.style.display = "none";
 	            const badge = document.createElement("span");
 	            badge.classList.add("badge-accepted");
@@ -175,11 +196,9 @@ function setupEditDeleteEvents() {
 	            badge.textContent = "[채택]";
 	            btn.parentElement.prepend(badge);
 	            
-	            // 2. 상태 텍스트 업데이트
 	            document.getElementById("question-status-text").textContent = "해결";
 	            document.getElementById("question-status-text").style.color = "green";
 	            
-	            // 3. 서버에서 최신 상태 동기화 (안정성 보장)
 	            await loadAnswers();
 	            
 	            alert("답변이 채택되었습니다.");
