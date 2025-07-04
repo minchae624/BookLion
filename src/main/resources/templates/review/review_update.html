@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>책 먹는 사자 - 감상평 작성</title>
+	<link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+	<header class="home-header">
+		<a th:href="@{/api/home}">
+			<img th:src="@{/img/linklogo.png}" alt="홈으로" class="linklogo">
+		</a>
+		<div class="home-user-info">
+			<span id="welcome-msg">환영합니다.</span>
+			<div class="home-nav-buttons">
+				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
+				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
+			</div>
+		</div>
+	</header>
+	<main class="mypage-container">
+		<h3>감상평 작성</h3>
+		<form class="signup-form" th:action="@{/api/posts/update/{id}(id=${post.postId})}" method="post">
+			<!-- 유저 정보 -->
+			<input type="hidden" name="userId" id="user-id" />
+			<input type="hidden" name="username" id="user-name" />
+
+			<!-- 게시글 정보 -->
+			<label for="post-title">글 제목</label>
+			<input type="text" id="post-title" name="title" class="input-field" th:value="${post.title}" required>
+			<label for="book-title">책 제목</label>
+			<input type="text" id="book-title" name="booktitle" class="input-field" th:value="${post.booktitle}" required>
+			<label for="author">작가</label>
+			<input type="text" id="author" name="author" class="input-field" th:value="${post.author}" required>
+			<label for="genre">장르</label>
+			<select id="genre" name="genre" class="input-field" required>
+				<option value="" th:selected="${post.genre == null}">선택</option>
+				<option value="소설" th:selected="${post.genre == '소설'}">소설</option>
+				<option value="에세이" th:selected="${post.genre == '에세이'}">에세이</option>
+				<option value="과학" th:selected="${post.genre == '과학'}">과학</option>
+				<option value="음악" th:selected="${post.genre == '음악'}">음악</option>
+			</select>
+
+			<label for="rating">별점</label>
+			<select id="rating" name="rating" class="input-field" required>
+				<option value="" th:selected="${post.rating == null}">선택</option>
+				<option value="5.0" th:selected="${post.rating == 5.0}">5.0</option>
+				<option value="4.5" th:selected="${post.rating == 4.5}">4.5</option>
+				<option value="4.0" th:selected="${post.rating == 4.0}">4.0</option>
+				<option value="3.5" th:selected="${post.rating == 3.5}">3.5</option>
+				<option value="3.0" th:selected="${post.rating == 3.0}">3.0</option>
+				<option value="2.5" th:selected="${post.rating == 2.5}">2.5</option>
+				<option value="2.0" th:selected="${post.rating == 2.0}">2.0</option>
+				<option value="1.5" th:selected="${post.rating == 1.5}">1.5</option>
+				<option value="1.0" th:selected="${post.rating == 1.0}">1.0</option>
+				<option value="0.5" th:selected="${post.rating == 0.5}">0.5</option>
+			</select>
+
+			<label for="content">내용</label>
+			<textarea id="content" name="content" class="input-field" rows="10" th:text="${post.content}" required
+				style="resize: vertical;"></textarea>
+			<div class="signup-button-group">
+				<button type="submit" class="btn btn-green">수정</button>
+				<a th:href="@{/api/posts}" class="btn btn-red">취소</a>
+			</div>
+		</form>
+	</main>
+	<script src="/js/review.js"></script>
+</body>
+
+</html>

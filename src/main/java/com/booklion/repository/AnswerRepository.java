@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.booklion.model.entity.Answers;
 import com.booklion.model.entity.Questions;
 
+import com.booklion.model.entity.Users;
+
 @Repository
 public interface AnswerRepository extends JpaRepository<Answers, Long>{
 	List<Answers> findByQuestion(Questions question);
@@ -15,4 +17,9 @@ public interface AnswerRepository extends JpaRepository<Answers, Long>{
     int countByQuestion(Questions question);
 
     void deleteByQuestion(Questions question);
+ 
+    List<Answers> findByUser(Users user);
+
+    void deleteAllByUser(Users user);
+
 }

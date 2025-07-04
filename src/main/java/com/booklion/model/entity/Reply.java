@@ -34,15 +34,23 @@ public class Reply {
 	
 	@Column(nullable = false)
 	private String content;
-	
-	private LocalDateTime writingtime;
 
+	private LocalDateTime writingtime;
+	
 	public void setContent(String content) {
 		this.content = content;
 	}
 
 	public void setWritingtime(LocalDateTime writingtime) {
 		this.writingtime = writingtime;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
+	public void setUser(Users user) {
+		this.user = user;
 	}
 
 }

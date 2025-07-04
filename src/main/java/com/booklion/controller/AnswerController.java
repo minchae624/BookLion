@@ -6,7 +6,9 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import com.booklion.dto.AnswerRequestDto;
 import com.booklion.dto.AnswerResponseDto;
@@ -88,7 +90,9 @@ public class AnswerController {
     
  // 답변 채택
     @PostMapping("/answers/accept")
+
     public String acceptAnswer(@RequestParam("answerId") Long answerId,RedirectAttributes redirectAttributes) {
+
         answerService.acceptAnswer(answerId);  
 
         Answers answer = answerRepository.findById(answerId)
@@ -96,6 +100,7 @@ public class AnswerController {
         Integer questionId = answer.getQuestion().getQuestId();
 
         redirectAttributes.addFlashAttribute("message", "답변이 채택되었습니다.");
+        
         return "redirect:/qna_detail?id="+ answerRepository.findById(answerId)
         .orElseThrow().getQuestion().getQuestId();
 

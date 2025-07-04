@@ -2,6 +2,8 @@ package com.booklion.service;
 
 import java.util.List;
 
+import com.booklion.dto.QuestionsResponseDto;
+import com.booklion.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,7 @@ import com.booklion.model.entity.Category;
 import com.booklion.model.entity.Like;
 import com.booklion.model.entity.Questions;
 import com.booklion.model.entity.Users;
+
 import com.booklion.repository.CategoryRepository;
 import com.booklion.repository.LikeRepository;
 import com.booklion.repository.QuestionRepository;
@@ -27,7 +30,9 @@ public class QuestionService {
 	private final QuestionRepository questionRepository;
 	private final LikeRepository likeRepository;
 	private final CategoryRepository categoryRepository;
-	
+
+	private final CategoryService categoryService;
+
 	public List<Questions> getAllQuestions() {
 		return questionRepository.findAllByOrderByQuestIdDesc();
 	}
@@ -111,12 +116,40 @@ public class QuestionService {
 	    }
 	}
 
+	/* 안형준 페이징 추가 */
+	public Page<QuestionsResponseDto> search(Pageable pageable, Integer categoryId, String input) {
+		Page<Questions> questions;
 
+		// 검색어가 null일 경우 빈 문자열로 처리 (NPE 방지)
+		if (input == null) input = "";
 
+		if (categoryId != null && categoryId > 0) {
+			// 카테고리 ID가 있을 경우
+			Category category = categoryService.getCategoryById(categoryId);
+			questions = questionRepository.findByCategoryIdAndTitleContaining(categoryId, input, pageable);
 
-	
+		} else {
+			// 카테고리 ID가 없을 경우 제목만 검색
+			questions = questionRepository.findByTitleContaining(input, pageable);
 
+		}
+		return questions.map(quest -> new QuestionsResponseDto(
 
+				quest.getQuestId(),
+				quest.getCategoryId(),
+				quest.getTitle(),
+				quest.getUser().getUsername(),
+				quest.getWritingtime(),
+				quest.getStatus() == QuestionStatus.solved,
+				quest.getViewCount(),
+				quest.getLikeCount()
+		));
 
+	}
+
+	@Transactional
+	public void deleteAllByuser(Users user) {
+		questionRepository.deleteAllByUser(user);
+	}
 
 }

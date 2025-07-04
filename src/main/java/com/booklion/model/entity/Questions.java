@@ -33,7 +33,6 @@ public class Questions {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer questId;
-
 	private String title;
 	private String content;
 	private LocalDateTime writingtime = LocalDateTime.now();

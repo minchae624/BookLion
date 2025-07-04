@@ -1,7 +1,8 @@
 package com.booklion.controller;
 
 import com.booklion.model.entity.Users;
-import com.booklion.service.UserService;
+import com.booklion.repository.LikeRepository;
+import com.booklion.service.*;
 import com.booklion.util.JwtUtil;
 
 import jakarta.servlet.http.HttpSession;
@@ -21,6 +22,11 @@ public class UserController {
 	
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final PostService postService;
+    private final ReplyService replyService;
+    private final LikeService likeService;
+    private final AnswerService answerService;
+    private final QuestionService questionService;
 
     // 회원가입
     @PostMapping("/signup")
@@ -109,6 +115,12 @@ public class UserController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String token) {
         String pureToken = token.replace("Bearer ", "");
+        Users user = userService.getUserInfoFromToken(pureToken);
+        likeService.deleteAllbyUser(user);
+        replyService.deleteAllByUser(user);
+        postService.deleteAllUsersPost(user);
+        answerService.deleteAllByUser(user);
+        questionService.deleteAllByuser(user);
         userService.deleteUserByToken(pureToken);
         return ResponseEntity.ok("deleted");
     }
