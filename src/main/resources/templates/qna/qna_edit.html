@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <title>질문 수정</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
   <header class="home-header">
-    <a href="/"><img src="/img/linklogo.png" alt="홈으로" class="linklogo" /></a>
-    <div class="home-user-info">
-      <span>질문 수정</span>
-    </div>
+	<a th:href="@{/api/home}">
+	  <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+	</a>
+	<div class="home-user-info">
+	  <span id="welcome-msg">환영합니다.</span>
+	  <div class="home-nav-buttons">
+	  	<a th:href="@{/logout}" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+	  	<a th:href="@{/mypage}" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
+	  </div>
+	</div>
   </header>
 
   <main class="mypage-container">
