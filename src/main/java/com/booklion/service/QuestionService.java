@@ -10,6 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.booklion.model.entity.Category;
+import com.booklion.model.entity.Like;
+import com.booklion.model.entity.Questions;
+import com.booklion.model.entity.Users;
+
 import com.booklion.repository.CategoryRepository;
 import com.booklion.repository.LikeRepository;
 import com.booklion.repository.QuestionRepository;
@@ -25,6 +30,7 @@ public class QuestionService {
 	private final QuestionRepository questionRepository;
 	private final LikeRepository likeRepository;
 	private final CategoryRepository categoryRepository;
+
 	private final CategoryService categoryService;
 
 	public List<Questions> getAllQuestions() {

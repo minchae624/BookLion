@@ -35,7 +35,7 @@ public class QuestionController {
 		model.addAttribute("categories", categoryRepository.findAll());
 		return "qna/qna_write";
 	}
-
+	
 	// 질문 작성 처리
 	@PostMapping("/questions/write")
 	public String createQuestion(@RequestParam String title,
@@ -63,31 +63,6 @@ public class QuestionController {
 	    return "redirect:/qna_detail?id=" + question.getQuestId(); 
 	}
 
-/*
-	// 질문 목록 + 검색 + 페이징
-	@GetMapping("/qna")
-	public String showQuestionList(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(required = false) Integer categoryId, 
-			@RequestParam(required = false) String input,
-			@SessionAttribute(name = "loginUser", required = false) Users loginUser, Model model) {
-
-		if (loginUser == null) {
-			return "redirect:/login";
-		}
-
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-		Page<Questions> questionPage = questionService.getPageQuestions(pageable, categoryId, input);
-
-		model.addAttribute("page", questionPage);
-		model.addAttribute("questions", questionPage.getContent());
-		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("input", input);
-		model.addAttribute("categoryId",categoryId);
-
-		return "qna/qna";
-	}
-
- */
 	/* 질문 목록 페이징 */
 	@GetMapping("/api/qna")
 	public String getQuest(Model model,
@@ -103,6 +78,7 @@ public class QuestionController {
 		model.addAttribute("categoryId", categoryId);
 		return "qna/qna";
 	}
+	
 	@GetMapping("/questions")
 	@ResponseBody
 	public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
@@ -193,11 +169,11 @@ public class QuestionController {
 	    return "redirect:/qna_detail?id=" + id;
 	}
 
-
 	// 삭제
 	@PostMapping("/questions/delete/{id}")
 	public String deleteQuestion(@PathVariable Integer id) {
 		questionService.deleteQuestion(id);
+
 		return "redirect:/api/qna";
 	}
 }
