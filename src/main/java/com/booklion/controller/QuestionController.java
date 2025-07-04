@@ -110,10 +110,12 @@ public class QuestionController {
 		
 		List<Answers> answers = answerService.getAnswersByQuestion(id);
 
-		if (shouldIncreaseView) {
-			question.recordView();
-			questionRepository.save(question);
-		}
+	    String viewKey = "viewed_" + id;
+	    if (session.getAttribute(viewKey) == null) {
+	        question.recordView();
+	        questionRepository.save(question);
+	        session.setAttribute(viewKey, true);
+	    }
 
 		model.addAttribute("question", question);
 		model.addAttribute("loginUser", loginUser);

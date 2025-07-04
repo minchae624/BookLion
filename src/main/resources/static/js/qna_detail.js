@@ -20,22 +20,22 @@ async function loadAnswers() {
 		answerListDiv.innerHTML = "<p>답변을 불러오는 데 실패했습니다.</p>";
 		return;
 	}
-	
+
 	const answers = await res.json();
 	answerListDiv.innerHTML = "";
 
 	const isAlreadyAccepted = answers.some(a => a.isAccepted === "Y");
 
 	const questionStatus = document.getElementById("question-status").value;
-	   const statusText = document.getElementById("question-status-text");
-	   if (questionStatus === "solved") {
-	       statusText.textContent = "해결";
-	       statusText.style.color = "green";
-	   } else {
-	       statusText.textContent = "미해결";
-	       statusText.style.color = "red";
-	   }
-	
+	const statusText = document.getElementById("question-status-text");
+	if (questionStatus === "solved") {
+		statusText.textContent = "해결";
+		statusText.style.color = "green";
+	} else {
+		statusText.textContent = "미해결";
+		statusText.style.color = "red";
+	}
+
 	answers.forEach(answer => {
 		const div = document.createElement("div");
 		div.classList.add("answer-item");
@@ -45,19 +45,19 @@ async function loadAnswers() {
 		let badge = "";
 
 		if (String(answer.answerStatus).toUpperCase() === "Y") {
-		            badge = `<span class="badge-accepted" style="color:blue; font-weight:bold;">[채택]</span>`;
-		        } else if (!isAlreadyAccepted && String(userId) === String(questionAuthorId)) {
-		            userButtons += `<button class="btn-accept" data-id="${answer.answerId}">채택</button>`;
-		        }
+			badge = `<span class="badge-accepted" style="color:blue; font-weight:bold;">[채택]</span>`;
+		} else if (!isAlreadyAccepted && String(userId) === String(questionAuthorId)) {
+			userButtons += `<button class="btn-accept" data-id="${answer.answerId}">채택</button>`;
+		}
 
-		
+
 		if (String(userId) === String(answer.userId)) {
 			userButtons += `
 				<button class="btn-edit" data-id="${answer.answerId}">수정</button>
 				<button class="btn-delete" data-id="${answer.answerId}">삭제</button>
 			`;
 		}
-		
+
 		div.innerHTML = `
 			<div style="display:flex; justify-content:space-between;">
 				<p><strong>${answer.username}</strong> ${badge}</p>
@@ -67,7 +67,7 @@ async function loadAnswers() {
 			<p style="text-align:right; font-size:0.9rem;">${new Date(answer.writingtime).toLocaleString()}</p>
 		`;
 		answerListDiv.appendChild(div);
-	}); 
+	});
 
 	setupEditDeleteEvents();
 }
@@ -153,40 +153,57 @@ function setupEditDeleteEvents() {
 	});
 
 	document.querySelectorAll(".btn-accept").forEach(btn => {
-	    btn.addEventListener("click", async() => {
-	        const answerId = btn.dataset.id;
-	        
-	        if (!confirm("이 답변을 채택하시겠습니까?")) return;
+		btn.addEventListener("click", async () => {
+			const answerId = btn.dataset.id;
 
-	        const res = await fetch("/api/answers/accept", {
-	            method: "POST",
-	            headers: {
-	                "Content-Type": "application/x-www-form-urlencoded"
-	            },
-	            body: `answerId=${answerId}`
-	        });
+			if (!confirm("이 답변을 채택하시겠습니까?")) return;
 
-	        if (res.ok) {
-	            
-	            btn.style.display = "none";
-	            const badge = document.createElement("span");
-	            badge.classList.add("badge-accepted");
-	            badge.style.cssText = "color:blue; font-weight:bold; margin-right:5px;";
-	            badge.textContent = "[채택]";
-	            btn.parentElement.prepend(badge);
-	            
-	           
-	            document.getElementById("question-status-text").textContent = "해결";
-	            document.getElementById("question-status-text").style.color = "green";
-	            
-	            
-	            await loadAnswers();
-	            
-	            alert("답변이 채택되었습니다.");
-	        } else {
-	            alert("채택 실패");
-	        }
-	    });
+			try {
+				const res = await fetch("/api/answers/accept", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					body: `answerId=${answerId}`
+				});
+
+				if (res.ok) {
+
+					const statusText = document.getElementById("question-status-text");
+					const statusHidden = document.getElementById("question-status");
+					
+					if (statusText) {
+					       statusText.textContent = "해결";
+					       statusText.style.color = "green";
+					   }
+					   if (statusHidden) {
+					       statusHidden.value = "solved";
+					   }
+
+
+					btn.style.display = "none";
+					
+					const badge = document.createElement("span");
+					badge.className = "badge-accepted";
+					badge.style.cssText = "color:blue; font-weight:bold; margin-right:5px;";
+					badge.textContent = "[채택]";
+					btn.parentElement.insertBefore(badge,btn);
+
+					document.querySelectorAll('.btn-accept').forEach(b => {
+					                    b.style.display = 'none';
+					                });
+
+					alert("답변이 채택되었습니다.");
+					
+					await loadAnswers();
+				} else {
+					throw new Error(await res.text());
+				}
+			} catch (err) {
+				console.error("채택 실패:", err);
+				alert("채택 처리 중 오류가 발생했습니다: " + err.message);
+			}
+		});
 	});
 
-	}
+}

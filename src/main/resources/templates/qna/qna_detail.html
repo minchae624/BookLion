@@ -39,11 +39,10 @@
 				<strong>[작성일]</strong> <span
 					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
 				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
+				
 				<strong>[상태]</strong>
 				<span id="question-status-text"
-				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
-				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
-				    미해결
+				      th:text="${question.status == 'solved' ? '해결' : '미해결'}">미해결
 				</span>
 
 					 
