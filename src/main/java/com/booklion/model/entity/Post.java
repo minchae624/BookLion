@@ -3,7 +3,6 @@ package com.booklion.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +39,22 @@ public class Post {
 
     private Integer replyCount;
 
+    // 조회수 증가 로직
+    public void recordView() {
+        if (viewCount==null) viewCount=0;
+        this.viewCount++;
+    }
+
+    // 댓글 수 증가 로직
+    public void recordReply() {
+        if (replyCount==null) replyCount=0;
+        this.replyCount++;
+    }
+
+    /* like 리스트에 추가 */
+    public void increaseLike(Like like) {
+        this.likes.add(like);
+    }
     public void setUser(Users user) {
         this.user = user;
     }
