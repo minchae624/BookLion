@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>책 먹는 사자 - 감상평</title>
+	<link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+	<header class="home-header">
+		<a th:href="@{/api/home}">
+			<img th:src="@{/img/linklogo.png}" alt="홈으로" class="linklogo">
+		</a>
+		<div class="home-user-info">
+			<span id="welcome-msg">환영합니다.</span>
+			<div class="home-nav-buttons">
+				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
+				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
+			</div>
+		</div>
+	</header>
+	<main class="mypage-container">
+		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+			<h3>감상평 목록</h3>
+			<a th:href="@{/api/posts/write}" class="btn btn-blue">글쓰기</a>
+		</div>
+		<form action="/api/posts" method="get">
+			<div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+				<select name="keyword" class="input-field" style="flex: 1;">
+					<option value="t">글 제목</option>
+					<option value="c">글 내용</option>
+					<option value="b">책 제목</option>
+					<option value="a">저자</option>
+				</select>
+				<input type="text" placeholder="검색어 입력" name="input" class="input-field" style="flex: 2;" />
+				<button type="submit" class="btn btn-secondary">검색</button>
+			</div>
+		</form>
+		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+			<thead>
+				<tr style="border-bottom: 2px solid #ccc;">
+					<th>번호</th>
+					<th>장르</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일</th>
+					<th>조회수</th>
+					<th>좋아요</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="post:${posts}"
+					th:onclick="|window.location.href='/api/posts/${post.postId}'|"
+					style="text-align: center;">
+					<td class = "ellipsis" th:text="${post.postId}"></td>
+					<td class = "ellipsis" th:text="${post.genre}"></td>
+					<td class = "ellipsis" ><a th:href="@{/api/posts/{id}(id=${post.postId})}" style="text-decoration: none; color: #333;" th:text="${post.title}" th:title="${post.title}">게시글 제목</a></td>
+					<td class = "ellipsis" th:text="${post.writer}"></td>
+					<td class = "ellipsis"  th:text="${#temporals.format(post.writingtime,'yyyy-MM-dd')}">2024-06-25</td>
+					<td class = "ellipsis"  th:text="${post.viewCount ?: 0}"></td>
+					<td class = "ellipsis"  th:text="${post.likeCount}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<!-- 페이징 영역 -->
+		<!-- 이전 버튼 -->
+		<div th:if="${page.totalElements > 0}"
+			 style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+			<span th:if="${page.hasPrevious()}">
+				<a th:href="@{/api/posts(page=${page.number - 1}, keyword=${keyword}, input=${input})}" class="btn btn-secondary">이전</a>
+			</span>
+
+			<!-- 페이지 번호 -->
+				<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+			<a th:href="@{/api/posts(page=${i}, keyword=${keyword}, input=${input})}"
+			   th:text="${i + 1}"
+			   th:classappend="${i == page.number} ? 'btn btn-blue' : 'btn btn-secondary'">
+			</a>
+			</span>
+			<!-- 다음 버튼 -->
+			<span th:if="${page.hasNext()}">
+				<a th:href="@{/api/posts(page=${page.number + 1}, keyword=${keyword}, input=${input})}" class="btn btn-secondary">다음</a>
+			</span>
+		</div>
+	</main>
+	<script src="/js/review.js"></script>
+</body>
+
+</html>

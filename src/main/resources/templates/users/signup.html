@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 먹는 사자 - 회원가입</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <main class="signup-container">
+    <h2>회원가입</h2>
+    <form class="signup-form">
+      <label for="signup-id">ID</label>
+      <div class="input-inline">
+        <input type="text" id="signup-id" name="signup-id" class="input-field" required>
+        <button type="button" id="check-duplicate" class="btn btn-secondary">중복 확인</button>
+    </div>
+
+      <label for="signup-pw">Password</label>
+      <input type="password" id="signup-pw" name="signup-pw" class="input-field" required>
+
+      <label for="signup-email">e-mail</label>
+      <input type="email" id="signup-email" name="signup-email" class="input-field" required>
+
+      <div class="signup-button-group">
+        <button type="submit" class="btn btn-green">가입</button>
+        <a th:href="@{/}" class="btn btn-red">취소</a>
+      </div>
+    </form>
+  </main>
+  <script th:src="@{/js/signup.js}"></script>
+</body>
+</html>

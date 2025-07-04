@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>책 먹는 사자 - 메인</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<main class="main-center">
+		<h1>책 먹는 사자</h1>
+		<div class="logo-wrap">
+			<img th:src="@{/img/logo.png}" alt="책 먹는 사자 로고" class="logo-img" />
+		</div>
+		<div class="auth-buttons">
+			<a th:href="@{/login}" class="btn btn-secondary">로그인</a>
+      		<a th:href="@{/signup}" class="btn btn-secondary">회원가입</a>
+		</div>
+	</main>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>책 먹는 사자 - 질문 작성</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <header class="home-header">
+    <a href="/api/home">
+      <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+    </a>
+    <div class="home-user-info">
+      <span id="welcome-msg">환영합니다.</span>
+      <div class="home-nav-buttons">
+        <a href="main.html" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+        <a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mypage-container">
+    <h3>질문 작성</h3>
+    <form class="signup-form" id="question-form" method="POST" action="/questions/write">
+      <label for="category">카테고리</label>
+      <select id="category" name="categoryId" class="input-field" required>
+        <option value="">선택</option>
+        <option value="1">책 추천</option>
+        <option value="2">이벤트</option>
+        <option value="3">기타</option>
+      </select>
+
+      <label for="title">제목</label>
+      <input type="text" id="title" name="title" class="input-field" required />
+
+      <label for="content">내용</label>
+      <textarea id="content" name="content" class="input-field" rows="10" required style="resize: vertical;"></textarea>
+
+      <div class="signup-button-group">
+        <button type="submit" class="btn btn-green">등록</button>
+        <a href="/qna" class="btn btn-red">취소</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("token");
+
+      fetch("/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(user => {
+          document.getElementById("welcome-msg").textContent = `환영합니다. ${user.username}님`;
+        })
+        .catch(() => {
+          document.getElementById("welcome-msg").textContent = `환영합니다.`;
+        });
+
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        window.location.href = "main.html";
+      });
+    });
+  </script>
+</body>
+
+</html>

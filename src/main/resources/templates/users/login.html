@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>책 먹는 사자 - 로그인</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<main class="login-container">
+		<h2>로그인</h2>
+		<form class="login-form">
+			<label for="userId">ID</label>
+			<input type="text" id="userId" name="userId" required class="input-field" />
+
+			<label for="password">Password</label>
+			<input type="password" id="password" name="password" required class="input-field" />
+
+			<div class="login-button-group">
+				<div class="login-button-sub-group">
+					<button type="submit" class="btn btn-green">로그인</button>
+					<a th:href="@{/signup}" class="btn btn-blue">회원가입</a>
+				</div>
+				<a th:href="@{/}" class="btn btn-red">취소</a>
+			</div>
+		</form>
+	</main>
+	<script th:src="@{/js/login.js}"></script>
+</body>
+
+</html>
