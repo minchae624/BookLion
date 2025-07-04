@@ -49,19 +49,13 @@
 			</div>
 
 			<!-- 본인 글일 때만 수정/삭제 버튼 -->
-			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
-				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
-					style="margin-right: 0.5rem;">수정</a>
-				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
-					style="display:inline;">
-					<button type="submit" class="btn btn-secondary">삭제</button>
-				</form>
-			</div>
-
-			<div class="question-content">
-				<pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
-			</div>
-		</div>
+			            <div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
+			                <a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
+			                    style="margin-right: 0.5rem;">수정</a>
+			                <button type="button" class="btn btn-secondary"
+			                    th:onclick="'deleteQuestion(' + ${question.questId} + ')'">삭제
+			                </button>
+			            </div>
 
 		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
 		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
