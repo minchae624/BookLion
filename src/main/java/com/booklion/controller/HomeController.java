@@ -32,11 +32,6 @@ public class HomeController {
 	public String reviewsPage() {
 	    return "review/reviews";
 	}
-
-	@GetMapping("/api/qna")
-	public String qnaPage() {
-	    return "qna/qna";
-	}
 	
 	@GetMapping("/mypage")
 	public String myPage() {

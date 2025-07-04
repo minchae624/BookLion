@@ -1,5 +1,6 @@
 package com.booklion.controller;
 
+import com.booklion.dto.QuestionsResponseDto;
 import com.booklion.model.entity.*;
 import com.booklion.repository.*;
 import com.booklion.service.*;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class QuestionController {
 		model.addAttribute("categories", categoryRepository.findAll());
 		return "qna/qna_write";
 	}
-
+	
 	// 질문 작성 처리
 	@PostMapping("/questions/write")
 	public String createQuestion(@RequestParam String title,
@@ -56,40 +58,34 @@ public class QuestionController {
 	    question.setLikeCount(0);
 
 	    questionRepository.save(question);
+	    
 
 	    return "redirect:/qna_detail?id=" + question.getQuestId(); 
 	}
 
-
-	// 질문 목록 + 검색 + 페이징
-	@GetMapping("/qna")
-	public String showQuestionList(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(required = false) Integer categoryId, 
-			@RequestParam(required = false) String input,
-			@SessionAttribute(name = "loginUser", required = false) Users loginUser, Model model) {
-
-		if (loginUser == null) {
-			return "redirect:/login";
-		}
-
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-		Page<Questions> questionPage = questionService.getPageQuestions(pageable, categoryId, input);
-
-		model.addAttribute("page", questionPage);
-		model.addAttribute("questions", questionPage.getContent());
-		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("input", input);
-		model.addAttribute("categoryId",categoryId);
-
+	/* 질문 목록 페이징 */
+	@GetMapping("/api/qna")
+	public String getQuest(Model model,
+											   @RequestParam(defaultValue = "0") int page,
+											   @RequestParam(defaultValue = "10") int size,
+											   @RequestParam(required = false) Integer categoryId,
+											   @RequestParam(required = false) String input){
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "questId")); // id 내림차순 정렬
+		Page<QuestionsResponseDto> dto = questionService.search(pageable, categoryId, input);
+		model.addAttribute("dto", dto.getContent());
+		model.addAttribute("page", dto);                // 페이지 정보
+		model.addAttribute("input", input);                 // 검색어 유지
+		model.addAttribute("categoryId", categoryId);
 		return "qna/qna";
 	}
-
+	
 	@GetMapping("/questions")
 	@ResponseBody
 	public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
 	                                    @RequestParam(required = false) String input, 
 	                                    @RequestParam(required = false) Integer categoryId) { 
 		
+		 
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
 	    return questionService.getPageQuestions(pageable, categoryId, input);
 	}
@@ -101,8 +97,17 @@ public class QuestionController {
 			Model model) {
 		
 		Users loginUser = (Users) session.getAttribute("loginUser");
+		
 		Questions question = questionRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("질문이 존재하지 않습니다."));
+		   
+		Map<Integer, String> categoryMap = Map.of(
+			        1, "책 추천",
+			        2, "이벤트",
+			        3, "기타"
+			    );
+			    String categoryName = categoryMap.getOrDefault(question.getCategoryId(), "알 수 없음");
+		
 		List<Answers> answers = answerService.getAnswersByQuestion(id);
 
 		if (shouldIncreaseView) {
@@ -112,8 +117,8 @@ public class QuestionController {
 
 		model.addAttribute("question", question);
 		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("answers", answerRepository.findByQuestion(question));
-		
+		model.addAttribute("categoryName", categoryName); 
+		model.addAttribute("answers", answerService.getAnswersByQuestion(id));
 		return "qna/qna_detail";
 	}
 
@@ -164,11 +169,11 @@ public class QuestionController {
 	    return "redirect:/qna_detail?id=" + id;
 	}
 
-
 	// 삭제
 	@PostMapping("/questions/delete/{id}")
 	public String deleteQuestion(@PathVariable Integer id) {
 		questionService.deleteQuestion(id);
-		return "redirect:/qna";
+
+		return "redirect:/api/qna";
 	}
 }

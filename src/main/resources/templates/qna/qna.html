@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8" />
@@ -63,7 +63,7 @@
 
 <body>
 	<header class="home-header">
-		<a href="http://localhost:8080/api/home">
+		 <a href="/api/home">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
 		</a>
 		<div class="home-user-info">
@@ -94,7 +94,6 @@
 				<button type="submit">검색</button>
 			</div>
 		</form>
-
 		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
 			<thead>
 				<tr>
@@ -109,119 +108,44 @@
 				</tr>
 			</thead>
 			<tbody id="question-list">
-				<tr>
-					<td colspan="8">로딩 중...</td>
+				<tr th:each="question : ${dto}"
+					th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
+					<td th:text="${question.id}"></td>
+					<td th:text="${question.getCategoryName()}"></td>
+					<td th:text="${question.title}"></td>
+					<td th:text="${question.writer}"></td>
+					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
+					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
+					<td th:text="${question.viewCount}"></td>
+					<td th:text="${question.likeCount}"></td>
 				</tr>
 			</tbody>
 		</table>
 
-		<div id="pagination" style="text-align:center; margin-top: 1rem;"></div>
+		<!-- 페이징 영역 -->
+		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+			<!-- 이전 버튼 -->
+			<span th:if="${page.hasPrevious()}">
+		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
+	</span>
+
+			<!-- 페이지 번호 -->
+			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+		<a th:href="@{/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
+		   th:text="${i + 1}"
+		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
+		</a>
+	</span>
+
+			<!-- 다음 버튼 -->
+			<span th:if="${page.hasNext()}">
+		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
+	</span>
+		</div>
 
 	</main>
 
-	<script>
-		const categoryMap = {
-		  1: "책 추천",
-		  2: "이벤트",
-		  3: "기타"
-		};
-		
-		function loadPage(page = 0) {
-			const category = document.getElementById("category").value;
-			const input = document.getElementById("keyword").value;
-
-			let url = `/questions?page=${page}&input=${encodeURIComponent(input)}`;
-				if (category !== "") {
-					url += `&categoryId=${category}`;
-				}
-
-				fetch(url, {
-					credentials: "include"
-				})
-				.then(res => res.json())
-				.then(data => {
-					const questions = data.content;
-					const currentPage = data.number;
-					const totalPages = data.totalPages;
-
-					const tbody = document.getElementById("question-list");
-					tbody.innerHTML = "";
-
-					if (questions.length === 0) {
-						tbody.innerHTML = `<tr><td colspan="8">질문이 없습니다.</td></tr>`;
-						return;
-					}
-
-					questions.forEach((q, idx) => {
-						const row = document.createElement("tr");
-						row.innerHTML = `
-	        <td>${idx + 1 + currentPage * 10}</td>
-			<td>${categoryMap[q.categoryId] || "-"}</td>
-	        <td><a href="/qna_detail?id=${q.questId}">${q.title}</a></td>
-	        <td>${q.user?.username || "-"}</td>
-	        <td>${q.writingtime?.substring(0, 10) || "-"}</td>
-	        <td style="color:${q.status === "solved" ? "green" : "red"}; font-weight:bold">
-	          ${q.status === "solved" ? "해결완료" : "미해결"}
-	        </td>
-	        <td>${q.viewCount}</td>
-	        <td>${q.likeCount ?? 0}</td>
-	      `;
-						tbody.appendChild(row);
-					});
-
-					const pagination = document.getElementById("pagination");
-					pagination.innerHTML = "";
-
-					if (currentPage > 0) {
-						const prevBtn = document.createElement("button");
-						prevBtn.textContent = "이전";
-						prevBtn.className = "btn btn-secondary";
-						prevBtn.addEventListener("click", () => loadPage(currentPage - 1));
-						pagination.appendChild(prevBtn);
-					}
-
-					for (let i = 0; i < totalPages; i++) {
-						const btn = document.createElement("button");
-						btn.textContent = i + 1;
-						btn.className = i === currentPage ? "btn btn-blue" : "btn btn-secondary";
-						btn.addEventListener("click", () => loadPage(i));
-						pagination.appendChild(btn);
-					}
-
-					if (currentPage < totalPages - 1) {
-						const nextBtn = document.createElement("button");
-						nextBtn.textContent = "다음";
-						nextBtn.className = "btn btn-secondary";
-						nextBtn.addEventListener("click", () => loadPage(currentPage + 1));
-						pagination.appendChild(nextBtn);
-					}
-				});
-		}
-
-
-
-		document.addEventListener("DOMContentLoaded", () => {
-			// 사용자 이름 출력
-			fetch("/api/users/info", {
-				credentials: "include"
-			})
-				.then(res => res.json())
-				.then(data => {
-					if (data.username) {
-						const msg = document.getElementById("welcome-msg");
-						if (msg) {
-							msg.textContent = `환영합니다, ${data.username}님`;
-						}
-					}
-				});
-			document.getElementById("search-form").addEventListener("submit", function (e) {
-				e.preventDefault();
-				loadPage(0);
-			});
-
-				loadPage(0); 
-		});
-	</script>
+<script src="/js/qna.js"></script>
 
 </body>
 
