@@ -43,9 +43,13 @@
 				<strong>[상태]</strong>
 				<span id="question-status-text"
 				      th:text="${question.status == 'solved' ? '해결' : '미해결'}">미해결
-				</span>
-
-					 
+				</span>			 
+			</div>
+			
+			<!-- 본문 추가 -->
+			<div class="question-content" style="margin-top: 1rem;">
+			    <strong>내용:</strong>
+			    <p th:text="${question.content}">질문 본문</p>
 			</div>
 
 			<!-- 본인 글일 때만 수정/삭제 버튼 -->
