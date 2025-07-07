@@ -196,8 +196,11 @@ function setupEditDeleteEvents() {
 				badge.textContent = "[채택]";
 				btn.parentElement.prepend(badge);
 
+				const statusText = document.getElementById("question-status-text");
 				document.getElementById("question-status-text").textContent = "해결";
 				document.getElementById("question-status-text").style.color = "green";
+
+				document.getElementById("question-status").value = "solved";
 
 				await loadAnswers();
 
