@@ -122,8 +122,8 @@
 		</table>
 
 		<!-- 페이징 영역 -->
-		<div th:if="${page.totalPages > 0}"
-		             style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">>
+		<div th:if="${page.totalPages > 0}" 
+		             style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
 			<!-- 이전 버튼 -->
 			<span th:if="${page.hasPrevious()}">
 		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
