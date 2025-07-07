@@ -1,0 +1,707 @@
+commit 9ce316dfbf447f94915174dab0109b7850acc447
+Author: 52kirai52 <52kirai52@gmail.com>
+Date:   Fri Jul 4 15:33:30 2025 +0900
+
+    qna 로고 스타일 수정 및  경로 수정
+
+diff --git a/src/main/resources/static/css/qna_detail.css b/src/main/resources/static/css/qna_detail.css
+index 166fe1b..0192c8e 100644
+--- a/src/main/resources/static/css/qna_detail.css
++++ b/src/main/resources/static/css/qna_detail.css
+@@ -81,10 +81,6 @@
+   border-bottom: 1px solid #ddd;
+ }
+ 
+-.linklogo {
+-  height: 40px;
+-}
+-
+ .home-user-info {
+   display: flex;
+   align-items: center;
+diff --git a/src/main/resources/templates/qna/qna.html b/src/main/resources/templates/qna/qna.html
+index 6a87712..8a12bf9 100644
+--- a/src/main/resources/templates/qna/qna.html
++++ b/src/main/resources/templates/qna/qna.html
+@@ -1,152 +1,152 @@
+-<!DOCTYPE html>
+-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+-
+-<head>
+-	<meta charset="UTF-8" />
+-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-	<title>책 먹는 사자 - Q&A</title>
+-	<link rel="stylesheet" href="/css/style.css" />
+-	<style>
+-		table th,
+-		table td {
+-			text-align: center;
+-			vertical-align: middle;
+-			padding: 8px;
+-		}
+-
+-		.btn-blue {
+-			background-color: #007bff;
+-			color: white;
+-		}
+-
+-		.btn-secondary {
+-			background-color: #ccc;
+-			color: black;
+-		}
+-
+-		body {
+-			font-family: Arial, sans-serif;
+-			margin: 20px;
+-		}
+-
+-		.search-container {
+-			display: flex;
+-			align-items: center;
+-			gap: 10px;
+-		}
+-
+-		.search-container select,
+-		.search-container input {
+-			padding: 8px;
+-			font-size: 14px;
+-		}
+-
+-		.search-container input {
+-			width: 400px;
+-		}
+-
+-		.search-container button {
+-			padding: 8px 16px;
+-			font-size: 14px;
+-			background-color: #007bff;
+-			color: white;
+-			border: none;
+-			cursor: pointer;
+-			border-radius: 4px;
+-		}
+-
+-		.search-container button:hover {
+-			background-color: #0056b3;
+-		}
+-	</style>
+-</head>
+-
+-<body>
+-	<header class="home-header">
+-		 <a href="/api/home">
+-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+-		</a>
+-		<div class="home-user-info">
+-			<span id="welcome-msg">환영합니다.</span>
+-			<div class="home-nav-buttons">
+-				<a href="/logout" class="btn btn-secondary">로그아웃</a>
+-				<a href="/mypage" class="btn btn-secondary">마이페이지</a>
+-			</div>
+-		</div>
+-	</header>
+-
+-	<main class="mypage-container">
+-		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+-			<h3>Q&A 목록</h3>
+-			<a href="/questions/write" class="btn btn-blue">질문하기</a>
+-		</div>
+-
+-		<form id="search-form">
+-			<div class="search-container">
+-				<select name="categoryId" id="category">
+-					<option value="">전체</option>
+-					<option value="1">책 추천</option>
+-					<option value="2">이벤트</option>
+-					<option value="3">기타</option>
+-				</select>
+-
+-				<input type="text" id="keyword" name="input" placeholder="제목, 작성자, 본문 내용으로 검색">
+-				<button type="submit">검색</button>
+-			</div>
+-		</form>
+-		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+-			<thead>
+-				<tr>
+-					<th>번호</th>
+-					<th>카테고리</th>
+-					<th>제목</th>
+-					<th>작성자</th>
+-					<th>작성일</th>
+-					<th>상태</th>
+-					<th>조회수</th>
+-					<th>좋아요</th>
+-				</tr>
+-			</thead>
+-			<tbody id="question-list">
+-				<tr th:each="question : ${dto}"
+-					th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
+-					<td th:text="${question.id}"></td>
+-					<td th:text="${question.getCategoryName()}"></td>
+-					<td th:text="${question.title}"></td>
+-					<td th:text="${question.writer}"></td>
+-					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
+-					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
+-					<td th:text="${question.viewCount}"></td>
+-					<td th:text="${question.likeCount}"></td>
+-				</tr>
+-			</tbody>
+-		</table>
+-
+-		<!-- 페이징 영역 -->
+-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+-			<!-- 이전 버튼 -->
+-			<span th:if="${page.hasPrevious()}">
+-		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
+-	</span>
+-
+-			<!-- 페이지 번호 -->
+-			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+-		<a th:href="@{/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
+-		   th:text="${i + 1}"
+-		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
+-		</a>
+-	</span>
+-
+-			<!-- 다음 버튼 -->
+-			<span th:if="${page.hasNext()}">
+-		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
+-	</span>
+-		</div>
+-
+-	</main>
+-
+-<script src="/js/qna.js"></script>
+-
+-</body>
+-
++<!DOCTYPE html>
++<html lang="ko" xmlns:th="http://www.thymeleaf.org">
++
++<head>
++	<meta charset="UTF-8" />
++	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
++	<title>책 먹는 사자 - Q&A</title>
++	<link rel="stylesheet" th:href="@{/css/style.css}" />
++	<script th:src="@{/js/frontshared.js}" defer></script>
++	<style>
++		table th,
++		table td {
++			text-align: center;
++			vertical-align: middle;
++			padding: 8px;
++		}
++
++		.btn-blue {
++			background-color: #007bff;
++			color: white;
++		}
++
++		.btn-secondary {
++			background-color: #ccc;
++			color: black;
++		}
++
++		body {
++			font-family: Arial, sans-serif;
++		}
++
++		.search-container {
++			display: flex;
++			align-items: center;
++			gap: 10px;
++		}
++
++		.search-container select,
++		.search-container input {
++			padding: 8px;
++			font-size: 14px;
++		}
++
++		.search-container input {
++			width: 400px;
++		}
++
++		.search-container button {
++			padding: 8px 16px;
++			font-size: 14px;
++			background-color: #007bff;
++			color: white;
++			border: none;
++			cursor: pointer;
++			border-radius: 4px;
++		}
++
++		.search-container button:hover {
++			background-color: #0056b3;
++		}
++	</style>
++</head>
++
++<body>
++	<header class="home-header">
++		 <a th:href="@{/api/home}">
++			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
++		</a>
++		<div class="home-user-info">
++			<span id="welcome-msg">환영합니다.</span>
++			<div class="home-nav-buttons">
++				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
++				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
++			</div>
++		</div>
++	</header>
++
++	<main class="mypage-container">
++		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
++			<h3>Q&A 목록</h3>
++			<a href="/questions/write" class="btn btn-blue">질문하기</a>
++		</div>
++
++		<form id="search-form">
++			<div class="search-container">
++				<select name="categoryId" id="category">
++					<option value="">전체</option>
++					<option value="1">책 추천</option>
++					<option value="2">이벤트</option>
++					<option value="3">기타</option>
++				</select>
++
++				<input type="text" id="keyword" name="input" placeholder="제목, 작성자, 본문 내용으로 검색">
++				<button type="submit">검색</button>
++			</div>
++		</form>
++		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
++			<thead>
++				<tr>
++					<th>번호</th>
++					<th>카테고리</th>
++					<th>제목</th>
++					<th>작성자</th>
++					<th>작성일</th>
++					<th>상태</th>
++					<th>조회수</th>
++					<th>좋아요</th>
++				</tr>
++			</thead>
++			<tbody id="question-list">
++				<tr th:each="question : ${dto}"
++					th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
++					<td th:text="${question.id}"></td>
++					<td th:text="${question.getCategoryName()}"></td>
++					<td th:text="${question.title}"></td>
++					<td th:text="${question.writer}"></td>
++					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
++					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
++					<td th:text="${question.viewCount}"></td>
++					<td th:text="${question.likeCount}"></td>
++				</tr>
++			</tbody>
++		</table>
++
++		<!-- 페이징 영역 -->
++		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
++			<!-- 이전 버튼 -->
++			<span th:if="${page.hasPrevious()}">
++		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
++	</span>
++
++			<!-- 페이지 번호 -->
++			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
++		<a th:href="@{/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
++		   th:text="${i + 1}"
++		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
++		</a>
++	</span>
++
++			<!-- 다음 버튼 -->
++			<span th:if="${page.hasNext()}">
++		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
++	</span>
++		</div>
++
++	</main>
++
++<script src="/js/qna.js"></script>
++
++</body>
++
+ </html>
+\ No newline at end of file
+diff --git a/src/main/resources/templates/qna/qna_detail.html b/src/main/resources/templates/qna/qna_detail.html
+index 10f297e..f5f61fa 100644
+--- a/src/main/resources/templates/qna/qna_detail.html
++++ b/src/main/resources/templates/qna/qna_detail.html
+@@ -1,100 +1,100 @@
+-<!DOCTYPE html>
+-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+-
+-<head>
+-	<meta charset="UTF-8" />
+-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-	<title>책 먹는 사자 - Q&A 상세</title>
+-	<link rel="stylesheet" href="/css/style.css" />
+-	<link rel="stylesheet" href="/css/qna_detail.css" />
+-	<script th:src="@{/js/frontshared.js}" defer></script>
+-</head>
+-
+-<body>
+-	<header class="home-header">
+-		<a href="/api/home">
+-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+-		</a>
+-		<div class="home-user-info">
+-			<span id="welcome-msg">환영합니다.</span>
+-			<div class="home-nav-buttons">
+-				<a href="/logout" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+-				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
+-			</div>
+-		</div>
+-	</header>
+-
+-	<!-- 로그인 유저 정보 -->
+-	<span id="login-username" style="display: none;" th:if="${loginUser != null}"
+-		th:text="${loginUser.username}"></span>
+-	<input type="hidden" id="user-id" th:if="${loginUser != null}" th:value="${loginUser.userId}" />
+-
+-	<main class="review-detail-container">
+-		<h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
+-
+-		<div class="question-wrapper">
+-			<div class="question-meta">
+-				<strong>[카테고리]</strong> <span th:text="${categoryName}">카테고리</span> |
+-				<strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
+-				<strong>[작성일]</strong> <span
+-					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
+-				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
+-				<strong>[상태]</strong>
+-				<span id="question-status-text"
+-				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
+-				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
+-				    미해결
+-				</span>
+-
+-					 
+-			</div>
+-
+-			<!-- 본인 글일 때만 수정/삭제 버튼 -->
+-			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
+-				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
+-					style="margin-right: 0.5rem;">수정</a>
+-				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
+-					style="display:inline;">
+-					<button type="submit" class="btn btn-secondary">삭제</button>
+-				</form>
+-			</div>
+-
+-			<div class="question-content">
+-				<pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
+-			</div>
+-		</div>
+-
+-		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
+-		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
+-			style="text-align: center; margin-top: 2rem;">
+-			<button type="submit" class="btn btn-blue">좋아요</button>
+-		</form>
+-
+-		<p style="text-align: center; margin-top: 0.5rem;">
+-			<span th:text="${question.likeCount}">0</span>
+-		</p>
+-
+-		<!-- 좋아요 메시지 JS alert 처리 -->
+-		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
+-
+-		<!-- 답변 리스트 영역 및 정보 전달용 hidden input -->
+-		<input type="hidden" id="question-id" th:value="${question.questId}" />
+-		<input type="hidden" id="user-id" th:value="${loginUser?.userId}" />
+-		<input type="hidden" id="question-author-id" th:value="${question.user.userId}" />
+-		<div id="answer-list"></div>
+-		<input type="hidden" id="question-status" th:value="${question.status}" />
+-		
+-
+-		<!-- 답변 작성 textarea -->
+-		<div style="margin-top: 2rem;">
+-			<label for="new-answer"><strong>답변 작성</strong></label>
+-			<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
+-			<div style="text-align: right; margin-top: 0.5rem;">
+-				<button id="btn-submit-answer" class="btn btn-blue">등록</button>
+-			</div>
+-		</div>
+-	</main>
+-	<script src="/js/qna_detail.js"></script>
+-</body>
+-
++<!DOCTYPE html>
++<html lang="ko" xmlns:th="http://www.thymeleaf.org">
++
++<head>
++	<meta charset="UTF-8" />
++	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
++	<title>책 먹는 사자 - Q&A 상세</title>
++	<link rel="stylesheet" th:href="@{/css/style.css}" />
++	<link rel="stylesheet" th:href="@{/css/qna_detail.css}" />
++	<script th:src="@{/js/frontshared.js}" defer></script>
++</head>
++
++<body>
++	<header class="home-header">
++		<a th:href="@{/api/home}">
++			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
++		</a>
++		<div class="home-user-info">
++			<span id="welcome-msg">환영합니다.</span>
++			<div class="home-nav-buttons">
++				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
++				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
++			</div>
++		</div>
++	</header>
++
++	<!-- 로그인 유저 정보 -->
++	<span id="login-username" style="display: none;" th:if="${loginUser != null}"
++		th:text="${loginUser.username}"></span>
++	<input type="hidden" id="user-id" th:if="${loginUser != null}" th:value="${loginUser.userId}" />
++
++	<main class="review-detail-container">
++		<h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
++
++		<div class="question-wrapper">
++			<div class="question-meta">
++				<strong>[카테고리]</strong> <span th:text="${categoryName}">카테고리</span> |
++				<strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
++				<strong>[작성일]</strong> <span
++					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
++				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
++				<strong>[상태]</strong>
++				<span id="question-status-text"
++				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
++				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
++				    미해결
++				</span>
++
++					 
++			</div>
++
++			<!-- 본인 글일 때만 수정/삭제 버튼 -->
++			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
++				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
++					style="margin-right: 0.5rem;">수정</a>
++				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
++					style="display:inline;">
++					<button type="submit" class="btn btn-secondary">삭제</button>
++				</form>
++			</div>
++
++			<div class="question-content">
++				<pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
++			</div>
++		</div>
++
++		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
++		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
++			style="text-align: center; margin-top: 2rem;">
++			<button type="submit" class="btn btn-blue">좋아요</button>
++		</form>
++
++		<p style="text-align: center; margin-top: 0.5rem;">
++			<span th:text="${question.likeCount}">0</span>
++		</p>
++
++		<!-- 좋아요 메시지 JS alert 처리 -->
++		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
++
++		<!-- 답변 리스트 영역 및 정보 전달용 hidden input -->
++		<input type="hidden" id="question-id" th:value="${question.questId}" />
++		<input type="hidden" id="user-id" th:value="${loginUser?.userId}" />
++		<input type="hidden" id="question-author-id" th:value="${question.user.userId}" />
++		<div id="answer-list"></div>
++		<input type="hidden" id="question-status" th:value="${question.status}" />
++		
++
++		<!-- 답변 작성 textarea -->
++		<div style="margin-top: 2rem;">
++			<label for="new-answer"><strong>답변 작성</strong></label>
++			<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
++			<div style="text-align: right; margin-top: 0.5rem;">
++				<button id="btn-submit-answer" class="btn btn-blue">등록</button>
++			</div>
++		</div>
++	</main>
++	<script src="/js/qna_detail.js"></script>
++</body>
++
+ </html>
+\ No newline at end of file
+diff --git a/src/main/resources/templates/qna/qna_edit.html b/src/main/resources/templates/qna/qna_edit.html
+index 6f2b558..c167d20 100644
+--- a/src/main/resources/templates/qna/qna_edit.html
++++ b/src/main/resources/templates/qna/qna_edit.html
+@@ -3,11 +3,11 @@
+ <head>
+   <meta charset="UTF-8" />
+   <title>질문 수정</title>
+-  <link rel="stylesheet" href="/css/style.css" />
++  <link rel="stylesheet" th:href="@{/css/style.css}" />
+ </head>
+ <body>
+   <header class="home-header">
+-    <a href="/"><img src="/img/linklogo.png" alt="홈으로" class="linklogo" /></a>
++    <a th:href="@{/api/home}"><img src="/img/linklogo.png" alt="홈으로" class="linklogo" /></a>
+     <div class="home-user-info">
+       <span>질문 수정</span>
+     </div>
+diff --git a/src/main/resources/templates/qna/qna_write.html b/src/main/resources/templates/qna/qna_write.html
+index fad27fd..b9acf72 100644
+--- a/src/main/resources/templates/qna/qna_write.html
++++ b/src/main/resources/templates/qna/qna_write.html
+@@ -1,74 +1,75 @@
+-<!DOCTYPE html>
+-<html lang="ko">
+-
+-<head>
+-  <meta charset="UTF-8" />
+-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-  <title>책 먹는 사자 - 질문 작성</title>
+-  <link rel="stylesheet" href="/css/style.css" />
+-</head>
+-
+-<body>
+-  <header class="home-header">
+-    <a href="/api/home">
+-      <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+-    </a>
+-    <div class="home-user-info">
+-      <span id="welcome-msg">환영합니다.</span>
+-      <div class="home-nav-buttons">
+-        <a href="main.html" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+-        <a href="mypage.html" class="btn btn-secondary">마이페이지</a>
+-      </div>
+-    </div>
+-  </header>
+-
+-  <main class="mypage-container">
+-    <h3>질문 작성</h3>
+-    <form class="signup-form" id="question-form" method="POST" action="/questions/write">
+-      <label for="category">카테고리</label>
+-      <select id="category" name="categoryId" class="input-field" required>
+-        <option value="">선택</option>
+-        <option value="1">책 추천</option>
+-        <option value="2">이벤트</option>
+-        <option value="3">기타</option>
+-      </select>
+-
+-      <label for="title">제목</label>
+-      <input type="text" id="title" name="title" class="input-field" required />
+-
+-      <label for="content">내용</label>
+-      <textarea id="content" name="content" class="input-field" rows="10" required style="resize: vertical;"></textarea>
+-
+-      <div class="signup-button-group">
+-        <button type="submit" class="btn btn-green">등록</button>
+-        <a href="/qna" class="btn btn-red">취소</a>
+-      </div>
+-    </form>
+-  </main>
+-
+-  <script>
+-    document.addEventListener("DOMContentLoaded", () => {
+-      const token = localStorage.getItem("token");
+-
+-      fetch("/api/users/me", {
+-        headers: {
+-          Authorization: `Bearer ${token}`
+-        }
+-      })
+-        .then(res => res.json())
+-        .then(user => {
+-          document.getElementById("welcome-msg").textContent = `환영합니다. ${user.username}님`;
+-        })
+-        .catch(() => {
+-          document.getElementById("welcome-msg").textContent = `환영합니다.`;
+-        });
+-
+-      document.getElementById("logout-btn").addEventListener("click", () => {
+-        localStorage.removeItem("token");
+-        window.location.href = "main.html";
+-      });
+-    });
+-  </script>
+-</body>
+-
+-</html>
++<!DOCTYPE html>
++<html lang="ko" xmlns:th="http://www.thymeleaf.org">
++
++<head>
++  <meta charset="UTF-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++  <title>책 먹는 사자 - 질문 작성</title>
++  <link rel="stylesheet" th:href="@{/css/style.css}" />
++  <script th:src="@{/js/frontshared.js}" defer></script>
++</head>
++
++<body>
++  <header class="home-header">
++    <a th:href="@{/api/home}">
++      <img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
++    </a>
++    <div class="home-user-info">
++      <span id="welcome-msg">환영합니다.</span>
++      <div class="home-nav-buttons">
++        <a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
++        <a href="/mypage" class="btn btn-secondary">마이페이지</a>
++      </div>
++    </div>
++  </header>
++
++  <main class="mypage-container">
++    <h3>질문 작성</h3>
++    <form class="signup-form" id="question-form" method="POST" action="/questions/write">
++      <label for="category">카테고리</label>
++      <select id="category" name="categoryId" class="input-field" required>
++        <option value="">선택</option>
++        <option value="1">책 추천</option>
++        <option value="2">이벤트</option>
++        <option value="3">기타</option>
++      </select>
++
++      <label for="title">제목</label>
++      <input type="text" id="title" name="title" class="input-field" required />
++
++      <label for="content">내용</label>
++      <textarea id="content" name="content" class="input-field" rows="10" required style="resize: vertical;"></textarea>
++
++      <div class="signup-button-group">
++        <button type="submit" class="btn btn-green">등록</button>
++        <a th:href="@{/api/qna}" class="btn btn-red">취소</a>
++      </div>
++    </form>
++  </main>
++
++  <script>
++    document.addEventListener("DOMContentLoaded", () => {
++      const token = localStorage.getItem("token");
++
++      fetch("/api/users/me", {
++        headers: {
++          Authorization: `Bearer ${token}`
++        }
++      })
++        .then(res => res.json())
++        .then(user => {
++          document.getElementById("welcome-msg").textContent = `환영합니다. ${user.username}님`;
++        })
++        .catch(() => {
++          document.getElementById("welcome-msg").textContent = `환영합니다.`;
++        });
++
++      document.getElementById("logout-btn").addEventListener("click", () => {
++        localStorage.removeItem("token");
++        window.location.href = "main.html";
++      });
++    });
++  </script>
++</body>
++
++</html>

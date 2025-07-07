@@ -49,4 +49,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = "/"
         welcomeMsg.textContent = "환영합니다.";
     }
+	
 });
