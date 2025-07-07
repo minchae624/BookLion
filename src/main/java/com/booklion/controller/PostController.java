@@ -1,6 +1,5 @@
 package com.booklion.controller;
 
-
 import com.booklion.dto.PostRequestDto;
 import com.booklion.dto.PostResponseDto;
 import com.booklion.model.entity.Post;
@@ -19,116 +18,116 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
 public class PostController {
-    private final PostService postService;
-    private final UserRepository userRepository;
+	private final PostService postService;
+	private final UserRepository userRepository;
 
-    /* 글 작성 페이지 */
-    @GetMapping("/write")
-    public String writePost(Model model) {
-        model.addAttribute("post", new Post());
-        return "review/review_write";
-    }
-    /* 글 수정 페이지 */
-    @GetMapping("/update/{id}")
-    public String updatePost(@PathVariable Long id ,Model model) {
-        Post ex_post = postService.findById(id);
-        model.addAttribute("post", ex_post);
-        return "review/review_update";
-    }
-    /* 글 수정 로직 */
-    @PostMapping("/update/{id}")
-    public String updatePost(@PathVariable Long id, Post post) {
-        postService.update(id, post);
-        return "redirect:/api/posts";
-    }
-    /* 글 삭제 로직 */
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        Post post = postService.findById(id);
-        postService.delete(post);
-        return ResponseEntity.ok().build();
-    }
-    /* 글 작성 로직 */
-    @PostMapping
-    public String write(@ModelAttribute Post post, @RequestParam String username) {
+	/* 글 작성 페이지 */
+	@GetMapping("/write")
+	public String writePost(Model model) {
+		model.addAttribute("post", new Post());
+		return "review/review_write";
+	}
 
-        Users user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("유저를 찾을 수 없음")
-        );
-        post.setUser(user);
-        postService.create(post);
-        return "redirect:/api/posts";
-    }
+	/* 글 수정 페이지 */
+	@GetMapping("/update/{id}")
+	public String updatePost(@PathVariable Long id, Model model) {
+		Post ex_post = postService.findById(id);
+		model.addAttribute("post", ex_post);
+		return "review/review_update";
+	}
 
-    /* 필터 검색 */
-    @GetMapping
-    public String search(Model model,
-                         @RequestParam(required = false) String keyword,
-                         @RequestParam(required = false) String input,
-                         @RequestParam(defaultValue = "0") int page,       // 기본 0페이지
-                         @RequestParam(defaultValue = "10") int size){     // 기본 10개씩)
+	/* 글 수정 로직 */
+	@PostMapping("/update/{id}")
+	public String updatePost(@PathVariable Long id, Post post) {
+		postService.update(id, post);
+		return "redirect:/api/posts";
+	}
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "postId")); // id 내림차순 정렬
-        Page<PostResponseDto> posts;
-        if(keyword != null && input != null && !input.isBlank()) {
-            switch (keyword) {
-                case "t":   //title 검색
-                    posts = postService.searchByTitle(input,pageable);
-                    break;
-                case "c":   // content 검색
-                    posts = postService.searchByContent(input, pageable);
-                    break;
-                case "b":   // booktitle 검색
-                    posts = postService.searchByBooktitle(input, pageable);
-                    break;
-                case "a":   // author 검색
-                    posts = postService.searchByAuthor(input, pageable);
-                    break;
-                default:
-                    posts = postService.findAll(pageable);
-                    break;
-            }
+	/* 글 삭제 로직 */
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+		Post post = postService.findById(id);
+		postService.delete(post);
+		return ResponseEntity.ok().build();
+	}
 
-        } else {
-            //검색 필터 없음
-            posts = postService.findAll(pageable);
-        }
-        model.addAttribute("keyword", keyword == null ? "" : keyword);
-        model.addAttribute("input", input == null ? "" : input);
-        model.addAttribute("posts", posts.getContent());
-        model.addAttribute("page", posts); // 페이징 정보 전체 전달
-        return "review/reviews";
-    }
+	/* 글 작성 로직 */
+	@PostMapping
+	public String write(@ModelAttribute Post post, @RequestParam String username) {
 
-    /* 상세 게시글 조회 */
-    @GetMapping("/{id}")
-    public String detail(Model model, @PathVariable Long id) {
-        Post post = postService.findById(id);
-        post.recordView();
-        postService.update(id, post);
-        model.addAttribute("posts", post);
-        return "review/review_detail";
-    }
+		Users user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없음"));
+		post.setUser(user);
+		postService.create(post);
+		return "redirect:/api/posts";
+	}
 
-    /* 좋아요 */
-    @PostMapping("/{id}/like")
-    public ResponseEntity<String> like(@PathVariable Long id, @RequestBody PostRequestDto dto){
-        Users loginuser = userRepository.findById(dto.getUserId()).orElseThrow(
-                () -> new IllegalArgumentException("유저를 찾을 수 없음")
-        );
+	/* 필터 검색 */
+	@GetMapping
+	public String search(Model model, @RequestParam(required = false) String keyword,
+			@RequestParam(required = false) String input, @RequestParam(defaultValue = "0") int page, // 기본 0페이지
+			@RequestParam(defaultValue = "10") int size) { // 기본 10개씩)
 
-        boolean liked = postService.likePost(id, loginuser);
-        if(liked){
-            return ResponseEntity.ok().build();
-        }
-        else {
-            return ResponseEntity.badRequest().body("이미 좋아요 눌렀습니다.");
-        }
-    }
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "postId")); // id 내림차순 정렬
+		Page<PostResponseDto> posts;
+		if (keyword != null && input != null && !input.isBlank()) {
+			switch (keyword) {
+			case "t": // title 검색
+				posts = postService.searchByTitle(input, pageable);
+				break;
+			case "c": // content 검색
+				posts = postService.searchByContent(input, pageable);
+				break;
+			case "b": // booktitle 검색
+				posts = postService.searchByBooktitle(input, pageable);
+				break;
+			case "a": // author 검색
+				posts = postService.searchByAuthor(input, pageable);
+				break;
+			default:
+				posts = postService.findAll(pageable);
+				break;
+			}
+
+		} else {
+			// 검색 필터 없음
+			posts = postService.findAll(pageable);
+		}
+		model.addAttribute("keyword", keyword == null ? "" : keyword);
+		model.addAttribute("input", input == null ? "" : input);
+		model.addAttribute("posts", posts.getContent());
+		model.addAttribute("page", posts); // 페이징 정보 전체 전달
+		return "review/reviews";
+	}
+
+	/* 상세 게시글 조회 */
+	@GetMapping("/{id}")
+	public String detail(Model model, @PathVariable Long id) {
+		Post post = postService.findById(id);
+		post.recordView();
+		postService.update(id, post);
+		model.addAttribute("posts", post);
+		return "review/review_detail";
+	}
+
+	/* 좋아요 */
+	@PostMapping("/{id}/like")
+	public ResponseEntity<String> like(@PathVariable Long id, @RequestBody PostRequestDto dto) {
+		Users loginuser = userRepository.findById(dto.getUserId())
+				.orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없음"));
+
+		boolean liked = postService.likePost(id, loginuser);
+		if (liked) {
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.badRequest().body("이미 좋아요 눌렀습니다.");
+		}
+	}
+	
+
 
 }

@@ -4,6 +4,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		const message = msgDiv.dataset.msg;
 		if (message) alert(message);
 	}
+	
+	const usernameSpan = document.getElementById("login-username");
+		const welcomeMsg = document.getElementById("welcome-msg");
+		if (usernameSpan && welcomeMsg) {
+			welcomeMsg.textContent = `환영합니다, ${usernameSpan.textContent}님`;
+		}
 	loadAnswers();
 });
 
@@ -28,6 +34,7 @@ async function loadAnswers() {
 
 	const questionStatus = document.getElementById("question-status").value;
 	const statusText = document.getElementById("question-status-text");
+
 	if (questionStatus === "solved") {
 		statusText.textContent = "해결";
 		statusText.style.color = "green";

@@ -6,6 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>책 먹는 사자 - Q&A</title>
 	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<script th:src="@{/js/frontshared.js}" defer></script>
+
 	<style>
 		table th,
 		table td {
@@ -62,14 +64,14 @@
 
 <body>
 	<header class="home-header">
-		 <a th:href="@{/api/home}">
+		<a th:href="@{/api/home}">
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
 		</a>
 		<div class="home-user-info">
 			<span id="welcome-msg">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<a th:href="@{/logout}" class="btn btn-secondary" id="logout-btn">로그아웃</a>
-				<a th:href="@{/mypage}" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
+				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
+				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
 			</div>
 		</div>
 	</header>
@@ -107,14 +109,13 @@
 				</tr>
 			</thead>
 			<tbody id="question-list">
-				<tr th:each="question : ${dto}"
-					th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
+				<tr th:each="question : ${dto}" th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
 					<td th:text="${question.id}"></td>
 					<td th:text="${question.getCategoryName()}"></td>
 					<td th:text="${question.title}"></td>
 					<td th:text="${question.writer}"></td>
 					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
-					<td th:text="${question.status} ? 해결 : 미해결"></td>
+					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
 					<td th:text="${question.viewCount}"></td>
 					<td th:text="${question.likeCount}"></td>
 				</tr>
@@ -122,37 +123,34 @@
 		</table>
 
 		<!-- 페이징 영역 -->
-		<div th:if="${page.totalPages > 0}" 
-		             style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+		<div th:if="${page.totalPages > 0}"
+			style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+
 			<!-- 이전 버튼 -->
 			<span th:if="${page.hasPrevious()}">
-		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
-	</span>
+				<a th:href="@{/api/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}"
+					class="btn btn-secondary">이전</a>
+			</span>
 
 			<!-- 페이지 번호 -->
 			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
-		<a th:href="@{/api/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
-		   th:text="${i + 1}"
-		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
-		</a>
-	</span>
+				<a th:href="@{/api/qna(page=${i}, input=${input}, categoryId=${categoryId})}" th:text="${i + 1}"
+					th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
+				</a>
+			</span>
 
 			<!-- 다음 버튼 -->
 			<span th:if="${page.hasNext()}">
-		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
-	</span>
-	
+				<a th:href="@{/api/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}"
+					class="btn btn-secondary">다음</a>
+			</span>
 		</div>
-		
-		<!-- 게시글 없을 때 안내 문구 -->
-		<p th:if="${page.totalElements == 0}" style="text-align: center; margin-top: 2rem;">
-		    등록된 질문이 없습니다.
-		</p>
+
 
 	</main>
-	
 
-<script src="/js/qna.js"></script>
+	<script src="/js/qna.js"></script>
 
 </body>
+
 </html>
