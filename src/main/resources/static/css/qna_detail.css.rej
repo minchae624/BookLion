@@ -1,0 +1,12 @@
+diff a/src/main/resources/static/css/qna_detail.css b/src/main/resources/static/css/qna_detail.css	(rejected hunks)
+@@ -81,10 +81,6 @@
+   border-bottom: 1px solid #ddd;
+ }
+ 
+-.linklogo {
+-  height: 40px;
+-}
+-
+ .home-user-info {
+   display: flex;
+   align-items: center;

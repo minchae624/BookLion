@@ -123,25 +123,30 @@
 		</table>
 
 		<!-- 페이징 영역 -->
-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
-			<!-- 이전 버튼 -->
-			<span th:if="${page.hasPrevious()}">
-		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
-	</span>
+		        <div th:if="${page.totalPages > 0}"
+		             style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
 
-			<!-- 페이지 번호 -->
-			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
-		<a th:href="@{/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
-		   th:text="${i + 1}"
-		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
-		</a>
-	</span>
+		            <!-- 이전 버튼 -->
+		            <span th:if="${page.hasPrevious()}">
+		                <a th:href="@{/api/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" 
+		                   class="btn btn-secondary">이전</a>
+		            </span>
 
-			<!-- 다음 버튼 -->
-			<span th:if="${page.hasNext()}">
-		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
-	</span>
-		</div>
+		            <!-- 페이지 번호 -->
+		            <span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+		                <a th:href="@{/api/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
+		                   th:text="${i + 1}"
+		                   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
+		                </a>
+		            </span>
+
+		            <!-- 다음 버튼 -->
+		            <span th:if="${page.hasNext()}">
+		                <a th:href="@{/api/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" 
+		                   class="btn btn-secondary">다음</a>
+		            </span>
+		        </div>
+
 
 	</main>
 

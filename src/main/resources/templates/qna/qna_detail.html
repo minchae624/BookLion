@@ -16,7 +16,7 @@
 			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
 		</a>
 		<div class="home-user-info">
-			<span id="welcome-msg">환영합니다.</span>
+			<span id="welcome-msg" th:if="${loginUser != null}" th:text="'환영합니다, ' + ${loginUser.username} + '님'">환영합니다.</span>
 			<div class="home-nav-buttons">
 				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
 				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
@@ -40,23 +40,21 @@
 					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
 				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
 				<strong>[상태]</strong>
-				<span id="question-status-text"
-				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
-				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
-				    미해결
+				<span id="question-status-text" th:text="${question.status == 'solved' ? '해결' : '미해결'}"
+					th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
+					미해결
 				</span>
 
-					 
+
 			</div>
 
 			<!-- 본인 글일 때만 수정/삭제 버튼 -->
 			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
 				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
 					style="margin-right: 0.5rem;">수정</a>
-				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
-					style="display:inline;">
-					<button type="submit" class="btn btn-secondary">삭제</button>
-				</form>
+				<button type="button" class="btn btn-secondary"
+					th:onclick="'deleteQuestion(' + ${question.questId} + ')'">삭제
+				</button>
 			</div>
 
 			<div class="question-content">
@@ -83,7 +81,7 @@
 		<input type="hidden" id="question-author-id" th:value="${question.user.userId}" />
 		<div id="answer-list"></div>
 		<input type="hidden" id="question-status" th:value="${question.status}" />
-		
+
 
 		<!-- 답변 작성 textarea -->
 		<div style="margin-top: 2rem;">

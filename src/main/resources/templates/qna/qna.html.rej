@@ -1,0 +1,306 @@
+diff a/src/main/resources/templates/qna/qna.html b/src/main/resources/templates/qna/qna.html	(rejected hunks)
+@@ -1,152 +1,152 @@
+-<!DOCTYPE html>
+-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+-
+-<head>
+-	<meta charset="UTF-8" />
+-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-	<title>책 먹는 사자 - Q&A</title>
+-	<link rel="stylesheet" href="/css/style.css" />
+-	<style>
+-		table th,
+-		table td {
+-			text-align: center;
+-			vertical-align: middle;
+-			padding: 8px;
+-		}
+-
+-		.btn-blue {
+-			background-color: #007bff;
+-			color: white;
+-		}
+-
+-		.btn-secondary {
+-			background-color: #ccc;
+-			color: black;
+-		}
+-
+-		body {
+-			font-family: Arial, sans-serif;
+-			margin: 20px;
+-		}
+-
+-		.search-container {
+-			display: flex;
+-			align-items: center;
+-			gap: 10px;
+-		}
+-
+-		.search-container select,
+-		.search-container input {
+-			padding: 8px;
+-			font-size: 14px;
+-		}
+-
+-		.search-container input {
+-			width: 400px;
+-		}
+-
+-		.search-container button {
+-			padding: 8px 16px;
+-			font-size: 14px;
+-			background-color: #007bff;
+-			color: white;
+-			border: none;
+-			cursor: pointer;
+-			border-radius: 4px;
+-		}
+-
+-		.search-container button:hover {
+-			background-color: #0056b3;
+-		}
+-	</style>
+-</head>
+-
+-<body>
+-	<header class="home-header">
+-		 <a href="/api/home">
+-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
+-		</a>
+-		<div class="home-user-info">
+-			<span id="welcome-msg">환영합니다.</span>
+-			<div class="home-nav-buttons">
+-				<a href="/logout" class="btn btn-secondary">로그아웃</a>
+-				<a href="/mypage" class="btn btn-secondary">마이페이지</a>
+-			</div>
+-		</div>
+-	</header>
+-
+-	<main class="mypage-container">
+-		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+-			<h3>Q&A 목록</h3>
+-			<a href="/questions/write" class="btn btn-blue">질문하기</a>
+-		</div>
+-
+-		<form id="search-form">
+-			<div class="search-container">
+-				<select name="categoryId" id="category">
+-					<option value="">전체</option>
+-					<option value="1">책 추천</option>
+-					<option value="2">이벤트</option>
+-					<option value="3">기타</option>
+-				</select>
+-
+-				<input type="text" id="keyword" name="input" placeholder="제목, 작성자, 본문 내용으로 검색">
+-				<button type="submit">검색</button>
+-			</div>
+-		</form>
+-		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+-			<thead>
+-				<tr>
+-					<th>번호</th>
+-					<th>카테고리</th>
+-					<th>제목</th>
+-					<th>작성자</th>
+-					<th>작성일</th>
+-					<th>상태</th>
+-					<th>조회수</th>
+-					<th>좋아요</th>
+-				</tr>
+-			</thead>
+-			<tbody id="question-list">
+-				<tr th:each="question : ${dto}"
+-					th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
+-					<td th:text="${question.id}"></td>
+-					<td th:text="${question.getCategoryName()}"></td>
+-					<td th:text="${question.title}"></td>
+-					<td th:text="${question.writer}"></td>
+-					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
+-					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
+-					<td th:text="${question.viewCount}"></td>
+-					<td th:text="${question.likeCount}"></td>
+-				</tr>
+-			</tbody>
+-		</table>
+-
+-		<!-- 페이징 영역 -->
+-		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+-			<!-- 이전 버튼 -->
+-			<span th:if="${page.hasPrevious()}">
+-		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
+-	</span>
+-
+-			<!-- 페이지 번호 -->
+-			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+-		<a th:href="@{/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
+-		   th:text="${i + 1}"
+-		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
+-		</a>
+-	</span>
+-
+-			<!-- 다음 버튼 -->
+-			<span th:if="${page.hasNext()}">
+-		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
+-	</span>
+-		</div>
+-
+-	</main>
+-
+-<script src="/js/qna.js"></script>
+-
+-</body>
+-
++<!DOCTYPE html>
++<html lang="ko" xmlns:th="http://www.thymeleaf.org">
++
++<head>
++	<meta charset="UTF-8" />
++	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
++	<title>책 먹는 사자 - Q&A</title>
++	<link rel="stylesheet" th:href="@{/css/style.css}" />
++	<script th:src="@{/js/frontshared.js}" defer></script>
++	<style>
++		table th,
++		table td {
++			text-align: center;
++			vertical-align: middle;
++			padding: 8px;
++		}
++
++		.btn-blue {
++			background-color: #007bff;
++			color: white;
++		}
++
++		.btn-secondary {
++			background-color: #ccc;
++			color: black;
++		}
++
++		body {
++			font-family: Arial, sans-serif;
++		}
++
++		.search-container {
++			display: flex;
++			align-items: center;
++			gap: 10px;
++		}
++
++		.search-container select,
++		.search-container input {
++			padding: 8px;
++			font-size: 14px;
++		}
++
++		.search-container input {
++			width: 400px;
++		}
++
++		.search-container button {
++			padding: 8px 16px;
++			font-size: 14px;
++			background-color: #007bff;
++			color: white;
++			border: none;
++			cursor: pointer;
++			border-radius: 4px;
++		}
++
++		.search-container button:hover {
++			background-color: #0056b3;
++		}
++	</style>
++</head>
++
++<body>
++	<header class="home-header">
++		 <a th:href="@{/api/home}">
++			<img src="/img/linklogo.png" alt="홈으로" class="linklogo" />
++		</a>
++		<div class="home-user-info">
++			<span id="welcome-msg">환영합니다.</span>
++			<div class="home-nav-buttons">
++				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
++				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
++			</div>
++		</div>
++	</header>
++
++	<main class="mypage-container">
++		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
++			<h3>Q&A 목록</h3>
++			<a href="/questions/write" class="btn btn-blue">질문하기</a>
++		</div>
++
++		<form id="search-form">
++			<div class="search-container">
++				<select name="categoryId" id="category">
++					<option value="">전체</option>
++					<option value="1">책 추천</option>
++					<option value="2">이벤트</option>
++					<option value="3">기타</option>
++				</select>
++
++				<input type="text" id="keyword" name="input" placeholder="제목, 작성자, 본문 내용으로 검색">
++				<button type="submit">검색</button>
++			</div>
++		</form>
++		<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
++			<thead>
++				<tr>
++					<th>번호</th>
++					<th>카테고리</th>
++					<th>제목</th>
++					<th>작성자</th>
++					<th>작성일</th>
++					<th>상태</th>
++					<th>조회수</th>
++					<th>좋아요</th>
++				</tr>
++			</thead>
++			<tbody id="question-list">
++				<tr th:each="question : ${dto}"
++					th:onclick="|window.location.href='/qna_detail?id=${question.id}'|">
++					<td th:text="${question.id}"></td>
++					<td th:text="${question.getCategoryName()}"></td>
++					<td th:text="${question.title}"></td>
++					<td th:text="${question.writer}"></td>
++					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
++					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
++					<td th:text="${question.viewCount}"></td>
++					<td th:text="${question.likeCount}"></td>
++				</tr>
++			</tbody>
++		</table>
++
++		<!-- 페이징 영역 -->
++		<div style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
++			<!-- 이전 버튼 -->
++			<span th:if="${page.hasPrevious()}">
++		<a th:href="@{/qna(page=${page.number - 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">이전</a>
++	</span>
++
++			<!-- 페이지 번호 -->
++			<span th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
++		<a th:href="@{/qna(page=${i}, input=${input}, categoryId=${categoryId})}"
++		   th:text="${i + 1}"
++		   th:classappend="${i == page.number} ? 'btn btn-primary' : 'btn btn-light'">
++		</a>
++	</span>
++
++			<!-- 다음 버튼 -->
++			<span th:if="${page.hasNext()}">
++		<a th:href="@{/qna(page=${page.number + 1}, input=${input}, categoryId=${categoryId})}" class="btn btn-secondary">다음</a>
++	</span>
++		</div>
++
++	</main>
++
++<script src="/js/qna.js"></script>
++
++</body>
++
+ </html>
+\ No newline at end of file

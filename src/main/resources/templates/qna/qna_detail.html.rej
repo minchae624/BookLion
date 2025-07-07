@@ -1,0 +1,202 @@
+diff a/src/main/resources/templates/qna/qna_detail.html b/src/main/resources/templates/qna/qna_detail.html	(rejected hunks)
+@@ -1,100 +1,100 @@
+-<!DOCTYPE html>
+-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+-
+-<head>
+-	<meta charset="UTF-8" />
+-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-	<title>책 먹는 사자 - Q&A 상세</title>
+-	<link rel="stylesheet" href="/css/style.css" />
+-	<link rel="stylesheet" href="/css/qna_detail.css" />
+-	<script th:src="@{/js/frontshared.js}" defer></script>
+-</head>
+-
+-<body>
+-	<header class="home-header">
+-		<a href="/api/home">
+-			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+-		</a>
+-		<div class="home-user-info">
+-			<span id="welcome-msg">환영합니다.</span>
+-			<div class="home-nav-buttons">
+-				<a href="/logout" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+-				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
+-			</div>
+-		</div>
+-	</header>
+-
+-	<!-- 로그인 유저 정보 -->
+-	<span id="login-username" style="display: none;" th:if="${loginUser != null}"
+-		th:text="${loginUser.username}"></span>
+-	<input type="hidden" id="user-id" th:if="${loginUser != null}" th:value="${loginUser.userId}" />
+-
+-	<main class="review-detail-container">
+-		<h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
+-
+-		<div class="question-wrapper">
+-			<div class="question-meta">
+-				<strong>[카테고리]</strong> <span th:text="${categoryName}">카테고리</span> |
+-				<strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
+-				<strong>[작성일]</strong> <span
+-					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
+-				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
+-				<strong>[상태]</strong>
+-				<span id="question-status-text"
+-				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
+-				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
+-				    미해결
+-				</span>
+-
+-					 
+-			</div>
+-
+-			<!-- 본인 글일 때만 수정/삭제 버튼 -->
+-			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
+-				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
+-					style="margin-right: 0.5rem;">수정</a>
+-				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
+-					style="display:inline;">
+-					<button type="submit" class="btn btn-secondary">삭제</button>
+-				</form>
+-			</div>
+-
+-			<div class="question-content">
+-				<pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
+-			</div>
+-		</div>
+-
+-		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
+-		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
+-			style="text-align: center; margin-top: 2rem;">
+-			<button type="submit" class="btn btn-blue">좋아요</button>
+-		</form>
+-
+-		<p style="text-align: center; margin-top: 0.5rem;">
+-			<span th:text="${question.likeCount}">0</span>
+-		</p>
+-
+-		<!-- 좋아요 메시지 JS alert 처리 -->
+-		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
+-
+-		<!-- 답변 리스트 영역 및 정보 전달용 hidden input -->
+-		<input type="hidden" id="question-id" th:value="${question.questId}" />
+-		<input type="hidden" id="user-id" th:value="${loginUser?.userId}" />
+-		<input type="hidden" id="question-author-id" th:value="${question.user.userId}" />
+-		<div id="answer-list"></div>
+-		<input type="hidden" id="question-status" th:value="${question.status}" />
+-		
+-
+-		<!-- 답변 작성 textarea -->
+-		<div style="margin-top: 2rem;">
+-			<label for="new-answer"><strong>답변 작성</strong></label>
+-			<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
+-			<div style="text-align: right; margin-top: 0.5rem;">
+-				<button id="btn-submit-answer" class="btn btn-blue">등록</button>
+-			</div>
+-		</div>
+-	</main>
+-	<script src="/js/qna_detail.js"></script>
+-</body>
+-
++<!DOCTYPE html>
++<html lang="ko" xmlns:th="http://www.thymeleaf.org">
++
++<head>
++	<meta charset="UTF-8" />
++	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
++	<title>책 먹는 사자 - Q&A 상세</title>
++	<link rel="stylesheet" th:href="@{/css/style.css}" />
++	<link rel="stylesheet" th:href="@{/css/qna_detail.css}" />
++	<script th:src="@{/js/frontshared.js}" defer></script>
++</head>
++
++<body>
++	<header class="home-header">
++		<a th:href="@{/api/home}">
++			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
++		</a>
++		<div class="home-user-info">
++			<span id="welcome-msg">환영합니다.</span>
++			<div class="home-nav-buttons">
++				<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
++				<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
++			</div>
++		</div>
++	</header>
++
++	<!-- 로그인 유저 정보 -->
++	<span id="login-username" style="display: none;" th:if="${loginUser != null}"
++		th:text="${loginUser.username}"></span>
++	<input type="hidden" id="user-id" th:if="${loginUser != null}" th:value="${loginUser.userId}" />
++
++	<main class="review-detail-container">
++		<h3>제목: <span th:text="${question.title}">질문 제목</span></h3>
++
++		<div class="question-wrapper">
++			<div class="question-meta">
++				<strong>[카테고리]</strong> <span th:text="${categoryName}">카테고리</span> |
++				<strong>[작성자]</strong> <span th:text="${question.user.username}">작성자</span> |
++				<strong>[작성일]</strong> <span
++					th:text="${#temporals.format(question.writingtime, 'yyyy-MM-dd')}">작성일</span> |
++				<strong>[조회수]</strong> <span th:text="${question.viewCount}">0</span> |
++				<strong>[상태]</strong>
++				<span id="question-status-text"
++				      th:text="${question.status == 'solved' ? '해결' : '미해결'}"
++				      th:style="${question.status == 'solved'} ? 'color:green' : 'color:red'">
++				    미해결
++				</span>
++
++					 
++			</div>
++
++			<!-- 본인 글일 때만 수정/삭제 버튼 -->
++			<div class="question-actions" th:if="${loginUser != null and question.user.username == loginUser.username}">
++				<a th:href="@{/questions/edit/{id}(id=${question.questId})}" class="btn btn-secondary"
++					style="margin-right: 0.5rem;">수정</a>
++				<form th:action="@{/questions/delete/{id}(id=${question.questId})}" method="post"
++					style="display:inline;">
++					<button type="submit" class="btn btn-secondary">삭제</button>
++				</form>
++			</div>
++
++			<div class="question-content">
++				<pre th:text="${question.content}" style="white-space: pre-wrap;">본문 내용</pre>
++			</div>
++		</div>
++
++		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
++		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
++			style="text-align: center; margin-top: 2rem;">
++			<button type="submit" class="btn btn-blue">좋아요</button>
++		</form>
++
++		<p style="text-align: center; margin-top: 0.5rem;">
++			<span th:text="${question.likeCount}">0</span>
++		</p>
++
++		<!-- 좋아요 메시지 JS alert 처리 -->
++		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
++
++		<!-- 답변 리스트 영역 및 정보 전달용 hidden input -->
++		<input type="hidden" id="question-id" th:value="${question.questId}" />
++		<input type="hidden" id="user-id" th:value="${loginUser?.userId}" />
++		<input type="hidden" id="question-author-id" th:value="${question.user.userId}" />
++		<div id="answer-list"></div>
++		<input type="hidden" id="question-status" th:value="${question.status}" />
++		
++
++		<!-- 답변 작성 textarea -->
++		<div style="margin-top: 2rem;">
++			<label for="new-answer"><strong>답변 작성</strong></label>
++			<textarea id="new-answer" rows="5" class="input-field" placeholder="답변을 입력하세요."></textarea>
++			<div style="text-align: right; margin-top: 0.5rem;">
++				<button id="btn-submit-answer" class="btn btn-blue">등록</button>
++			</div>
++		</div>
++	</main>
++	<script src="/js/qna_detail.js"></script>
++</body>
++
+ </html>
+\ No newline at end of file
