@@ -19,8 +19,8 @@
 			<span id="welcome-msg" th:if="${loginUser != null}"
 				th:text="'환영합니다, ' + ${loginUser.username} + '님'">환영합니다.</span>
 			<div class="home-nav-buttons">
-				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
-				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
+				<a th:href="@{/}" class="btn btn-secondary" id="logout-btn">로그아웃</a>
+				<a th:href="@{/mypage}" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
 			</div>
 		</div>
 	</header>
@@ -65,14 +65,14 @@
 
 		<!-- 좋아요 버튼 (로그인한 사용자만 가능) -->
 		<form th:action="@{/questions/{id}/like(id=${question.questId})}" method="post" th:if="${loginUser != null}"
-			style="text-align: center; margin-top: 2rem;">
-			<button type="submit" class="btn btn-blue">좋아요</button>
-		</form>
+					style="text-align: center; margin-top: 2rem;">
+					<button type="submit" class="btn btn-blue">좋아요</button>
+				</form>
 
-		<p style="text-align: center; margin-top: 0.5rem;">
-			<span th:text="${question.likeCount}">0</span>
-		</p>
-
+				<p style="text-align: center; margin-top: 0.5rem;">
+					<span th:text="${question.likeCount}">0</span>
+				</p>
+				
 		<!-- 좋아요 메시지 JS alert 처리 -->
 		<div id="message" th:if="${message}" th:data-msg="${message}"></div>
 

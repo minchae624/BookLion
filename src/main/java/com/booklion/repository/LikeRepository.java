@@ -32,6 +32,9 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     // 회원탈퇴 - user로 like 삭제
     void deleteLikesByUser(Users user);
+    
+    void deleteAllByQuestionIn(List<Questions> questions);
+
 
 }
 

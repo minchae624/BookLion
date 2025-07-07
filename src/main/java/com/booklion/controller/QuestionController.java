@@ -63,24 +63,31 @@ public class QuestionController {
 	/* 질문 목록 페이징 */
 	@GetMapping("/api/qna")
 	public String getQuest(Model model, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam(required = false) Integer categoryId,
-			@RequestParam(required = false) String input) {
+			@RequestParam(defaultValue = "10") int size, 
+			@RequestParam(required = false) Integer categoryId,
+			@RequestParam(required = false) String input,
+			  @RequestParam(required = false) String status){
+		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "questId")); // id 내림차순 정렬
-		Page<QuestionsResponseDto> dto = questionService.search(pageable, categoryId, input);
+		
+		Page<QuestionsResponseDto> dto = questionService.search(pageable, categoryId, input,status);
+		
 		model.addAttribute("dto", dto.getContent());
 		model.addAttribute("page", dto); // 페이지 정보
 		model.addAttribute("input", input); // 검색어 유지
 		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("status", status);
+		 
 		return "qna/qna";
 	}
 
 	@GetMapping("/questions")
 	@ResponseBody
 	public Page<Questions> getQuestions(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(required = false) String input, @RequestParam(required = false) Integer categoryId) {
-
+			@RequestParam(required = false) String input, @RequestParam(required = false) Integer categoryId,
+			 @RequestParam(required = false) String status) {
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("questId").descending());
-		return questionService.getPageQuestions(pageable, categoryId, input);
+		return questionService.getPageQuestions(input, categoryId,status,pageable);
 	}
 
 	// 질문 상세
@@ -99,11 +106,13 @@ public class QuestionController {
 
 		List<Answers> answers = answerService.getAnswersByQuestion(id);
 
-		if (shouldIncreaseView) {
-			question.recordView();
-			questionRepository.save(question);
-		}
-
+		 String viewKey = "viewed_" + id;
+		    if (session.getAttribute(viewKey) == null) {
+		        question.recordView();
+		        questionRepository.save(question);
+		        session.setAttribute(viewKey, true);
+		    }
+		
 		model.addAttribute("question", question);
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("categoryName", categoryName);
@@ -117,6 +126,8 @@ public class QuestionController {
 			RedirectAttributes redirectAttributes) {
 
 		boolean liked = questionService.likeQuestion(id, loginUser);
+		
+		
 		if (liked) {
 			redirectAttributes.addFlashAttribute("message", "좋아요를 눌렀습니다.");
 		} else {

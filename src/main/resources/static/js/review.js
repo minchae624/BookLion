@@ -78,7 +78,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 			}).then(res => {
 				if (res.ok) {
 					alert("좋아요 성공.")
-					window.location.reload();
+					var likecount = document.getElementById("like-count");
+					let currentCount = parseInt(likecount.innerText); // 또는 textContent
+					likecount.innerText = currentCount + 1;
 				} else {
 					res.text().then(msg => {
 						alert(msg)

@@ -7,6 +7,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         2: "이벤트",
         3: "기타"
     }
+	
+	document.getElementById("search-form").addEventListener("submit", function (e) {
+		e.preventDefault();
+
+		const category = document.getElementById("category").value;
+		const input = document.getElementById("keyword").value;
+		const status = document.getElementById("status").value;
+
+		let url = `/api/qna?page=0`;
+
+		if (category) url += `&categoryId=` + category;
+		if (input) url += `&input=` + encodeURIComponent(input);
+		if (status) url += `&status=` + status;
+
+		window.location.href = url;
+	});
+
+	
     const token = localStorage.getItem("token");
     // 사용자 정보 가져오기
     if (token) {

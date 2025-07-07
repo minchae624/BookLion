@@ -72,7 +72,6 @@ public class AnswerService {
     
     @Transactional
     public void acceptAnswer(Long answerId) {
-        
     	Answers answer = answerRepository.findById(answerId).orElseThrow() ;
 
         List<Answers> answers = answerRepository.findByQuestion(answer.getQuestion());

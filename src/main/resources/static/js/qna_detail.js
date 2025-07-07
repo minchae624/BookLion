@@ -20,6 +20,7 @@ const answerSubmitBtn = document.getElementById("btn-submit-answer");
 const userId = document.getElementById("user-id")?.value;
 const questionAuthorId = document.getElementById("question-author-id")?.value;
 
+
 async function loadAnswers() {
 	const res = await fetch(`/api/questions/${questionId}/answers?timestamp=${new Date().getTime()}`);
 	if (!res.ok) {

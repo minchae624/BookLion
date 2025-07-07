@@ -11,6 +11,7 @@
 	<style>
 		table th,
 		table td {
+			white-space: nowrap;  
 			text-align: center;
 			vertical-align: middle;
 			padding: 8px;
@@ -90,6 +91,12 @@
 					<option value="2">이벤트</option>
 					<option value="3">기타</option>
 				</select>
+				
+				<select name="status" id="status">
+						<option value="">전체</option>
+						<option value="solved">해결</option>
+						<option value="unsolved">미해결</option>
+					</select>
 
 				<input type="text" id="keyword" name="input" placeholder="제목, 작성자, 본문 내용으로 검색">
 				<button type="submit">검색</button>
@@ -115,10 +122,15 @@
 					<td th:text="${question.title}"></td>
 					<td th:text="${question.writer}"></td>
 					<td th:text="${#temporals.format(question.writingTime,'yyyy-MM-dd')}"></td>
-					<td th:text="${question.status} ? 해결됨 : 해결안됨"></td>
+					<td th:text="${question.status} ? 해결 : 미해결"></td>
 					<td th:text="${question.viewCount}"></td>
 					<td th:text="${question.likeCount}"></td>
 				</tr>
+				
+				<tr th:if="${#lists.isEmpty(dto)}">
+				  <td colspan="8">해당하는 글이 없습니다.</td>
+				</tr>
+
 			</tbody>
 		</table>
 
