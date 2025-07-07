@@ -1,57 +1,57 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>질문 수정</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
+	<meta charset="UTF-8" />
+	<title>질문 수정</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 
 <body>
 	<header class="home-header">
-			<a th:href="@{/api/home}">
-				<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
-			</a>
-			<div class="home-user-info">
-				<span id="welcome-msg" th:if="${loginUser != null}" th:text="'환영합니다, ' + ${loginUser.username} + '님'">환영합니다.</span>
-				<div class="home-nav-buttons">
-					<a href="/" class="btn btn-secondary" id="logout-btn">로그아웃</a>
-					<a href="/mypage" class="btn btn-secondary" id="mypage-btn">마이페이지</a>
-				</div>
+		<a th:href="@{/api/home}">
+			<img src="/img/linklogo.png" alt="홈으로" class="linklogo">
+		</a>
+		<div class="home-user-info">
+			<span id="welcome-msg" th:if="${loginUser != null}"
+				th:text="'환영합니다, ' + ${loginUser.username} + '님'">환영합니다.</span>
+			<div class="home-nav-buttons">
+				<button id="logout-btn" class="btn btn-secondary">로그아웃</button>
+				<button id="mypage-btn" class="btn btn-secondary">마이페이지</button>
 			</div>
-		</header>
+		</div>
+	</header>
 
-  <main class="mypage-container">
-    <h2>질문 수정</h2>
-    <form th:action="@{/questions/edit/{id}(id=${question.questId})}" method="post">
-      <label for="title">제목</label>
-      <input type="text" id="title" name="title"
-             th:value="${question.title}" class="input-field" required />
+	<main class="mypage-container">
+		<h2>질문 수정</h2>
+		<form th:action="@{/questions/edit/{id}(id=${question.questId})}" method="post">
+			<label for="title">제목</label>
+			<input type="text" id="title" name="title" th:value="${question.title}" class="input-field" required />
 
-      <label for="category">카테고리</label>
-      <select id="category" name="categoryId" class="input-field" required>
-        <option th:each="cat : ${categories}"
-                th:value="${cat.categoryId}"
-                th:text="${cat.category}"
-                th:selected="${cat.categoryId == question.categoryId}"></option>
-      </select>
+			<label for="category">카테고리</label>
+			<select id="category" name="categoryId" class="input-field" required>
+				<option th:each="cat : ${categories}" th:value="${cat.categoryId}" th:text="${cat.category}"
+					th:selected="${cat.categoryId == question.categoryId}"></option>
+			</select>
 
-      <label for="content">본문</label>
-      <textarea id="content" name="content" rows="10" class="input-field"
-                th:text="${question.content}" required></textarea>
+			<label for="content">본문</label>
+			<textarea id="content" name="content" rows="10" class="input-field" th:text="${question.content}"
+				required></textarea>
 
-      <div style="margin-top: 1rem;">
-        <button type="submit" class="btn btn-blue">수정 완료</button>
-        <a th:href="@{/qna_detail(id=${question.questId})}" class="btn btn-secondary">취소</a>
-      </div>
-    </form>
-  </main>
-  <script>
-	const questionId = document.getElementById("question-id").value;
-	const answerListDiv = document.getElementById("answer-list");
-	const answerTextarea = document.getElementById("new-answer");
-	const answerSubmitBtn = document.getElementById("btn-submit-answer");
-	const userId = document.getElementById("user-id")?.value;
-	const questionAuthorId = document.getElementById("question-author-id")?.value;
-  </script>
+			<div style="margin-top: 1rem;">
+				<button type="submit" class="btn btn-blue">수정 완료</button>
+				<a th:href="@{/qna_detail(id=${question.questId})}" class="btn btn-secondary">취소</a>
+			</div>
+		</form>
+	</main>
+	<script>
+		const questionId = document.getElementById("question-id").value;
+		const answerListDiv = document.getElementById("answer-list");
+		const answerTextarea = document.getElementById("new-answer");
+		const answerSubmitBtn = document.getElementById("btn-submit-answer");
+		const userId = document.getElementById("user-id")?.value;
+		const questionAuthorId = document.getElementById("question-author-id")?.value;
+	</script>
 </body>
+
 </html>
